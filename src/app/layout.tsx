@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import { Providers } from '@/lib/providers';
+import { PerformanceDashboard } from '@/components/debug/PerformanceDashboard';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
         >
           <Providers>
             {children}
+            <PerformanceDashboard />
           </Providers>
         </body>
       </html>

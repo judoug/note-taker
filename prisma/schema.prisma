@@ -40,10 +40,16 @@ model Note {
   
   // Relations
   tags      Tag[]    @relation("NoteTags")
+  summaries NoteSummary[]
 
   @@map("notes")
+  // Performance-optimized indexes for common query patterns
   @@index([userId]) // Index for faster user queries
+  @@index([userId, updatedAt(sort: Desc)]) // Composite index for user + sort by updated
+  @@index([userId, createdAt(sort: Desc)]) // Composite index for user + sort by created
   @@index([createdAt]) // Index for date-based sorting
+  @@index([updatedAt]) // Index for updated date sorting
+  @@index([title]) // Index for title searches
 }
 
 // Tag model - both manual and AI-generated tags
@@ -58,10 +64,40 @@ model Tag {
 
   @@map("tags")
   @@unique([name]) // Ensure unique tag names globally
+  @@index([name]) // Index for fast tag name lookups
+  @@index([source]) // Index for filtering by tag source (AI vs MANUAL)
+  @@index([name, source]) // Composite index for tag name + source queries
+}
+
+// NoteSummary model - AI-generated summaries for notes
+model NoteSummary {
+  id               String      @id @default(uuid())
+  noteId           String
+  note             Note        @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  summary          String      @db.Text
+  summaryType      SummaryType @default(BRIEF)
+  wordCount        Int
+  originalWordCount Int
+  confidence       Float?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@map("note_summaries")
+  @@unique([noteId, summaryType]) // Ensure only one summary of each type per note
+  @@index([noteId]) // Index for fast note summary lookups
+  @@index([summaryType]) // Index for filtering by summary type
+  @@index([createdAt]) // Index for date-based sorting
 }
 
 // Enum for tag sources
 enum TagSource {
   AI
   MANUAL
+}
+
+// Enum for summary types
+enum SummaryType {
+  BRIEF
+  DETAILED
+  BULLETS
 }

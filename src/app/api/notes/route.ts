@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { getUserByClerkId, createNote, getUserNotes } from '@/lib/db';
+import { performance as perfMonitor } from '@/lib/performance';
 import type { CreateNoteData } from '@/types';
 
 // GET /api/notes - List user's notes
 export async function GET(request: NextRequest) {
+  const startTime = performance.now();
+  
   try {
     const user = await currentUser();
     
     if (!user) {
+      perfMonitor.trackAPI('/api/notes', performance.now() - startTime, false);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -31,6 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get notes with optional filtering
+    const dbStartTime = performance.now();
     const notes = await getUserNotes(dbUser.id, {
       search,
       tags,
@@ -42,6 +47,10 @@ export async function GET(request: NextRequest) {
       limit,
       offset,
     });
+    
+    // Track database and API performance
+    perfMonitor.trackDB('getUserNotes', performance.now() - dbStartTime, notes.length);
+    perfMonitor.trackAPI('/api/notes GET', performance.now() - startTime, true);
 
     return NextResponse.json({
       success: true,
@@ -60,10 +69,13 @@ export async function GET(request: NextRequest) {
 
 // POST /api/notes - Create a new note
 export async function POST(request: NextRequest) {
+  const startTime = performance.now();
+  
   try {
     const user = await currentUser();
     
     if (!user) {
+      perfMonitor.trackAPI('/api/notes POST', performance.now() - startTime, false);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -92,11 +104,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create note
+    const dbStartTime = performance.now();
     const note = await createNote(dbUser.id, {
       title: title.trim(),
       content: content.trim(),
       tags,
     });
+    
+    // Track database and API performance
+    perfMonitor.trackDB('createNote', performance.now() - dbStartTime, 1);
+    perfMonitor.trackAPI('/api/notes POST', performance.now() - startTime, true);
 
     return NextResponse.json({
       success: true,
@@ -106,6 +123,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating note:', error);
+    perfMonitor.trackAPI('/api/notes POST', performance.now() - startTime, false);
     return NextResponse.json(
       { error: 'Failed to create note' },
       { status: 500 }

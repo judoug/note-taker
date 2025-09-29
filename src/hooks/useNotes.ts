@@ -2,13 +2,17 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notesApi } from '@/lib/api';
 import type { CreateNoteData, UpdateNoteData, NoteWithTags, NotesFilterParams } from '@/types';
 
-// Query keys
+// Query key factory for consistent caching and performance optimization
 export const noteKeys = {
   all: ['notes'] as const,
   lists: () => [...noteKeys.all, 'list'] as const,
   list: (filters: NotesFilterParams) => [...noteKeys.lists(), filters] as const,
   details: () => [...noteKeys.all, 'detail'] as const,
   detail: (id: string) => [...noteKeys.details(), id] as const,
+  // Performance: Separate cache for AI summaries
+  summaries: (noteId: string) => [...noteKeys.detail(noteId), 'summaries'] as const,
+  // Performance: Cache for tags to avoid repeated fetches
+  tags: () => ['tags'] as const,
 };
 
 // Get all notes with advanced filters

@@ -3,25 +3,40 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 
-// Create a client
+// Create a performance-optimized query client
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
-        staleTime: 60 * 1000, // 1 minute
+        // Performance: Cache data for 10 minutes to reduce API calls
+        staleTime: 10 * 60 * 1000, // 10 minutes
+        // Keep data in cache for 30 minutes even when not in use
+        gcTime: 30 * 60 * 1000, // 30 minutes (replaces cacheTime in v5)
+        // Retry configuration for better reliability
         retry: (failureCount, error: unknown) => {
-          // Don't retry on 4xx errors
+          // Don't retry on 4xx errors (client errors)
           const apiError = error as { status?: number };
           if (apiError?.status && apiError.status >= 400 && apiError.status < 500) {
             return false;
           }
           return failureCount < 3;
         },
+        // Use exponential backoff for retries
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+        // Performance: Don't refetch on window focus for better performance
+        refetchOnWindowFocus: false,
+        // Reliability: Refetch on reconnect to ensure data freshness
+        refetchOnReconnect: true,
+        // Performance: Only refetch if data is stale
+        refetchOnMount: 'always',
+        // Network: Disable refetch interval by default
+        refetchInterval: false,
       },
       mutations: {
-        retry: false, // Don't retry mutations by default
+        // Don't retry mutations by default to prevent duplicate operations
+        retry: false,
+        // Keep failed mutations in cache for debugging
+        gcTime: 5 * 60 * 1000, // 5 minutes
       },
     },
   });

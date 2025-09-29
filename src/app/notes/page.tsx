@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { UserButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { withPerformanceTracking } from '@/lib/performance';
 import { NotesView } from '@/components/notes/NotesView';
 import { CreateNoteForm } from '@/components/notes/CreateNoteForm';
 import { EditNoteForm } from '@/components/notes/EditNoteForm';

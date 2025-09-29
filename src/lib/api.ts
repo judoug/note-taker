@@ -27,12 +27,13 @@ export class ApiError extends Error {
   }
 }
 
-// Generic API request handler
+// Performance-monitored API request handler
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
+  const startTime = performance.now();
   
   const config: RequestInit = {
     headers: {
@@ -47,6 +48,16 @@ async function apiRequest<T>(
     
     // Parse response JSON
     const data = await response.json();
+    
+    // Performance: Log API call timing in development
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      const duration = performance.now() - startTime;
+      if (duration > 1000) { // Log calls taking more than 1 second
+        console.warn(`🐌 Slow API call: ${endpoint} took ${duration.toFixed(2)}ms`);
+      } else if (duration > 500) {
+        console.log(`⏱️ API call: ${endpoint} took ${duration.toFixed(2)}ms`);
+      }
+    }
     
     // Handle non-2xx responses
     if (!response.ok) {

@@ -240,8 +240,21 @@ export async function getUserNotes(
 
   return prisma.note.findMany({
     where,
-    include: {
-      tags: true,
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      updatedAt: true,
+      userId: true,
+      tags: {
+        select: {
+          id: true,
+          name: true,
+          source: true,
+          createdAt: true,
+        },
+      },
     },
     orderBy,
     take: limit,
