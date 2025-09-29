@@ -317,8 +317,62 @@
         "dependencies": [
           8
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Next.js API Route for Tag Suggestion",
+            "description": "Develop a Next.js API endpoint that receives note content and triggers the AI tag suggestion workflow.",
+            "dependencies": [],
+            "details": "Set up a POST API route (e.g., /api/tags/suggest) that accepts note content and metadata. Ensure proper request validation and error handling.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Integrate OpenAI API for Tag Extraction",
+            "description": "Implement logic in the API route to call OpenAI and extract relevant tags from the provided note content.",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "Craft a prompt for OpenAI to suggest tags based on note content. Parse the response to obtain a clean array of suggested tags. Handle API errors and rate limits.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Store AI-Suggested Tags in Tags Table",
+            "description": "Save the AI-generated tags in the database, marking their source as 'AI'.",
+            "dependencies": [
+              "9.2"
+            ],
+            "details": "Extend the Tags table schema if needed to include a 'source' field. Implement logic to insert new tags and associate them with the note, ensuring duplicates are avoided.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Display Suggested Tags in the UI",
+            "description": "Update the note creation/edit UI to show AI-suggested tags for user review.",
+            "dependencies": [
+              "9.3"
+            ],
+            "details": "Design and implement UI components to present suggested tags. Ensure tags are clearly marked as AI-generated and allow users to interact with them.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement User Confirmation and Tag Saving",
+            "description": "Enable users to accept or reject suggested tags and save their choices to the database.",
+            "dependencies": [
+              "9.4"
+            ],
+            "details": "Add UI controls for confirming or dismissing each suggested tag. Update backend logic to persist only confirmed tags and handle user feedback gracefully.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 10,
@@ -442,7 +496,7 @@
     ],
     "metadata": {
       "created": "2025-09-29T19:16:22.146Z",
-      "updated": "2025-09-29T21:39:39.541Z",
+      "updated": "2025-09-29T21:55:27.865Z",
       "description": "Tasks for master context"
     }
   }

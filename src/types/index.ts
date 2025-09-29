@@ -111,3 +111,19 @@ export interface GenerateNoteResponse {
     model: string
   }
 }
+
+// AI Tag Suggestion types
+export interface SuggestTagsRequest {
+  title: string
+  content: string
+  existingTags?: string[]
+}
+
+export interface SuggestTagsResponse {
+  success: boolean
+  suggestions: string[]
+  usage: {
+    tokens: number
+    model: string
+  }
+}

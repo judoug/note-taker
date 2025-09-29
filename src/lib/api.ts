@@ -4,7 +4,9 @@ import type {
   NoteWithTags, 
   ApiResponse, 
   GenerateNoteRequest, 
-  GenerateNoteResponse 
+  GenerateNoteResponse,
+  SuggestTagsRequest,
+  SuggestTagsResponse
 } from '@/types';
 
 // Base API configuration
@@ -131,6 +133,14 @@ export const aiApi = {
       body: JSON.stringify(data),
     });
   },
+
+  // Suggest tags for a note using AI
+  async suggestTags(data: SuggestTagsRequest): Promise<SuggestTagsResponse> {
+    return apiRequest<SuggestTagsResponse>('/tags/suggest', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 };
 
 // Export individual functions for convenience
@@ -142,4 +152,4 @@ export const {
   delete: deleteNote,
 } = notesApi;
 
-export const { generateNote } = aiApi;
+export const { generateNote, suggestTags } = aiApi;

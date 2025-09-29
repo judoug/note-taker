@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { X, Plus, Hash, Save } from 'lucide-react';
+import { AITagSuggestions } from './AITagSuggestions';
 import type { UpdateNoteData, NoteWithTags } from '@/types';
 
 // Form validation schema
@@ -33,6 +34,7 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
     formState: { errors, isSubmitting, isDirty },
     setValue,
     reset,
+    watch,
   } = useForm<EditNoteFormData>({
     resolver: zodResolver(editNoteSchema),
     defaultValues: {
@@ -41,6 +43,10 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
       tags: note.tags.map(tag => tag.name),
     },
   });
+
+  // Watch form values for AI suggestions
+  const watchedTitle = watch('title') || '';
+  const watchedContent = watch('content') || '';
 
   // Update form when note changes
   useEffect(() => {
@@ -68,6 +74,15 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
     const newTags = tags.filter(tag => tag !== tagToRemove);
     setTags(newTags);
     setValue('tags', newTags, { shouldDirty: true });
+  };
+
+  // Add AI suggested tag
+  const handleAITagAdd = (suggestedTag: string) => {
+    if (!tags.includes(suggestedTag)) {
+      const newTags = [...tags, suggestedTag];
+      setTags(newTags);
+      setValue('tags', newTags, { shouldDirty: true });
+    }
   };
 
   // Handle tag input key press
@@ -218,6 +233,17 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
             <p className="mt-1 text-xs text-gray-500">
               Press Enter or click + to add tags
             </p>
+
+            {/* AI Tag Suggestions */}
+            <div className="mt-4">
+              <AITagSuggestions
+                title={watchedTitle}
+                content={watchedContent}
+                existingTags={tags}
+                onTagAdd={handleAITagAdd}
+                disabled={isFormDisabled}
+              />
+            </div>
           </div>
 
           {/* Form Actions */}

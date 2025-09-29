@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { X, Plus, Hash } from 'lucide-react';
+import { AITagSuggestions } from './AITagSuggestions';
 import type { CreateNoteData } from '@/types';
 
 // Form validation schema
@@ -32,6 +33,7 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
     formState: { errors, isSubmitting },
     setValue,
     reset,
+    watch,
   } = useForm<CreateNoteFormData>({
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
@@ -40,6 +42,10 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
       tags: [],
     },
   });
+
+  // Watch form values for AI suggestions
+  const watchedTitle = watch('title') || '';
+  const watchedContent = watch('content') || '';
 
   // Add tag to the list
   const addTag = () => {
@@ -57,6 +63,15 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
     const newTags = tags.filter(tag => tag !== tagToRemove);
     setTags(newTags);
     setValue('tags', newTags);
+  };
+
+  // Add AI suggested tag
+  const handleAITagAdd = (suggestedTag: string) => {
+    if (!tags.includes(suggestedTag)) {
+      const newTags = [...tags, suggestedTag];
+      setTags(newTags);
+      setValue('tags', newTags);
+    }
   };
 
   // Handle tag input key press
@@ -191,6 +206,17 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
             <p className="mt-1 text-xs text-gray-500">
               Press Enter or click + to add tags
             </p>
+
+            {/* AI Tag Suggestions */}
+            <div className="mt-4">
+              <AITagSuggestions
+                title={watchedTitle}
+                content={watchedContent}
+                existingTags={tags}
+                onTagAdd={handleAITagAdd}
+                disabled={isFormDisabled}
+              />
+            </div>
           </div>
 
           {/* Form Actions */}

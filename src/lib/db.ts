@@ -227,6 +227,30 @@ export async function getTagsForNote(noteId: string): Promise<Tag[]> {
   return note?.tags || [];
 }
 
+// Create multiple AI-suggested tags
+export async function createAITags(tagNames: string[]): Promise<Tag[]> {
+  const tags: Tag[] = [];
+  
+  for (const name of tagNames) {
+    const tag = await prisma.tag.upsert({
+      where: { name },
+      update: {},
+      create: { name, source: 'AI' },
+    });
+    tags.push(tag);
+  }
+  
+  return tags;
+}
+
+// Get tags by source (AI or MANUAL)
+export async function getTagsBySource(source: TagSource): Promise<Tag[]> {
+  return prisma.tag.findMany({
+    where: { source },
+    orderBy: { name: 'asc' },
+  });
+}
+
 // Search operations
 export async function searchNotes(userId: string, query: string) {
   return prisma.note.findMany({
