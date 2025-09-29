@@ -1,4 +1,11 @@
-import type { CreateNoteData, UpdateNoteData, NoteWithTags, ApiResponse } from '@/types';
+import type { 
+  CreateNoteData, 
+  UpdateNoteData, 
+  NoteWithTags, 
+  ApiResponse, 
+  GenerateNoteRequest, 
+  GenerateNoteResponse 
+} from '@/types';
 
 // Base API configuration
 const API_BASE = '/api';
@@ -115,6 +122,17 @@ export const notesApi = {
   },
 };
 
+// AI Generation API
+export const aiApi = {
+  // Generate a note using AI
+  async generateNote(data: GenerateNoteRequest): Promise<GenerateNoteResponse> {
+    return apiRequest<GenerateNoteResponse>('/generate-note', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
 // Export individual functions for convenience
 export const {
   getAll: getAllNotes,
@@ -123,3 +141,5 @@ export const {
   update: updateNote,
   delete: deleteNote,
 } = notesApi;
+
+export const { generateNote } = aiApi;

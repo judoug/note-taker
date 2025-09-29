@@ -9,8 +9,10 @@ import { NotesView } from '@/components/notes/NotesView';
 import { CreateNoteForm } from '@/components/notes/CreateNoteForm';
 import { EditNoteForm } from '@/components/notes/EditNoteForm';
 import { DeleteNoteDialog } from '@/components/notes/DeleteNoteDialog';
+import { AIGenerateNoteForm } from '@/components/notes/AIGenerateNoteForm';
 import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
-import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData } from '@/types';
+import { useAINoteMutation } from '@/hooks/useAIGeneration';
+import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData } from '@/types';
 import type { Tag } from '@prisma/client';
 
 export default function NotesPage() {
@@ -25,6 +27,7 @@ export default function NotesPage() {
   
   // Modal States
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showAIForm, setShowAIForm] = useState(false);
   const [editingNote, setEditingNote] = useState<NoteWithTags | null>(null);
   const [deletingNote, setDeletingNote] = useState<NoteWithTags | null>(null);
   
@@ -45,6 +48,7 @@ export default function NotesPage() {
   const createNoteMutation = useCreateNote();
   const updateNoteMutation = useUpdateNote();
   const deleteNoteMutation = useDeleteNote();
+  const aiNoteMutation = useAINoteMutation();
 
   // Redirect to sign-in if not authenticated
   useEffect(() => {
@@ -131,6 +135,10 @@ export default function NotesPage() {
     setShowCreateForm(true);
   };
 
+  const handleAIGenerateClick = () => {
+    setShowAIForm(true);
+  };
+
   // Form Handlers
   const handleCreateNote = async (data: CreateNoteData) => {
     await createNoteMutation.mutateAsync(data);
@@ -149,6 +157,23 @@ export default function NotesPage() {
       await deleteNoteMutation.mutateAsync(deletingNote.id);
       setDeletingNote(null);
     }
+  };
+
+  // AI Generation Handlers
+  const handleGenerateNote = async (request: GenerateNoteRequest) => {
+    return await aiNoteMutation.generateNote(request);
+  };
+
+  const handleUseGeneratedNote = async (generatedNote: GeneratedNoteData) => {
+    // Create a new note with the generated content
+    const noteData: CreateNoteData = {
+      title: generatedNote.title,
+      content: generatedNote.content,
+      tags: ['ai-generated'], // Add a tag to indicate this was AI-generated
+    };
+
+    await createNoteMutation.mutateAsync(noteData);
+    setShowAIForm(false);
   };
 
   return (
@@ -187,6 +212,7 @@ export default function NotesPage() {
             viewMode={viewMode}
             onViewModeChange={setViewMode}
             onCreateNote={handleNewNoteClick}
+            onAIGenerate={handleAIGenerateClick}
             notesCount={notes.length}
           />
 
@@ -206,6 +232,15 @@ export default function NotesPage() {
           onSubmit={handleCreateNote}
           onCancel={() => setShowCreateForm(false)}
           isLoading={createNoteMutation.isPending}
+        />
+      )}
+
+      {showAIForm && (
+        <AIGenerateNoteForm
+          onGenerate={handleGenerateNote}
+          onCancel={() => setShowAIForm(false)}
+          onUseGenerated={handleUseGeneratedNote}
+          isLoading={aiNoteMutation.isLoading}
         />
       )}
 

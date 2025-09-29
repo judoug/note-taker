@@ -1,4 +1,4 @@
-import { Plus, SortDesc, Filter } from 'lucide-react';
+import { Plus, SortDesc, Filter, Sparkles } from 'lucide-react';
 import { SearchBar } from './SearchBar';
 import { TagFilter } from './TagFilter';
 import { ViewToggle } from './ViewToggle';
@@ -14,6 +14,7 @@ interface NotesToolbarProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
   onCreateNote: () => void;
+  onAIGenerate?: () => void;
   notesCount: number;
   className?: string;
 }
@@ -27,6 +28,7 @@ export function NotesToolbar({
   viewMode,
   onViewModeChange,
   onCreateNote,
+  onAIGenerate,
   notesCount,
   className = ""
 }: NotesToolbarProps) {
@@ -41,13 +43,25 @@ export function NotesToolbar({
           className="flex-1"
         />
         
-        <button
-          onClick={onCreateNote}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">New Note</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {onAIGenerate && (
+            <button
+              onClick={onAIGenerate}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">AI Generate</span>
+            </button>
+          )}
+          
+          <button
+            onClick={onCreateNote}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">New Note</span>
+          </button>
+        </div>
       </div>
 
       {/* Bottom Row - Filters and Controls */}

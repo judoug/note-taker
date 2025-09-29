@@ -84,3 +84,30 @@ export interface NoteListItemProps {
   onEdit: (note: NoteWithTags) => void
   onDelete: (noteId: string) => void
 }
+
+// AI Generation types
+export interface GenerateNoteRequest {
+  prompt: string
+  tone?: 'professional' | 'casual' | 'creative' | 'academic'
+  length?: 'short' | 'medium' | 'long'
+}
+
+export interface GeneratedNoteData {
+  title: string
+  content: string
+  generatedBy: 'ai'
+  prompt: string
+  settings: {
+    tone: string
+    length: string
+  }
+}
+
+export interface GenerateNoteResponse {
+  success: boolean
+  data: GeneratedNoteData
+  usage: {
+    tokens: number
+    model: string
+  }
+}

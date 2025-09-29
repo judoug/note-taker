@@ -23,7 +23,8 @@ NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/dashboard
 # Clerk Webhook Secret (for user synchronization)
 CLERK_WEBHOOK_SECRET=your_webhook_secret_here
 
-# OpenAI API Key (for later tasks)
+# OpenAI API Key (for AI note generation - Task 8)
+# Get this from https://platform.openai.com/api-keys
 OPENAI_API_KEY=your_openai_api_key_here
 
 # Database URL (NeonDB PostgreSQL)
@@ -136,9 +137,61 @@ ngrok http 3000
 4. Verify the user appears in the `users` table
 5. Update your profile in Clerk and verify changes sync to database
 
+## AI-Powered Note Generation Setup (Task 8):
+
+### 1. Get OpenAI API Key:
+
+1. Go to [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Sign up/Sign in to your OpenAI account
+3. Click "Create new secret key"
+4. Name it (e.g., "AI Note Taker")
+5. Copy the API key (starts with `sk-`)
+6. Add it to your `.env.local` file:
+   ```
+   OPENAI_API_KEY=sk-your_actual_key_here
+   ```
+
+### 2. Understanding OpenAI API Costs:
+
+- **GPT-4 Turbo**: ~$0.01 per 1K input tokens, ~$0.03 per 1K output tokens
+- **Example**: Generating a 200-word note costs ~$0.005-0.01
+- **Rate Limits**: 5,000 requests/minute for new accounts
+- **Recommendations**: Start with a modest usage limit in OpenAI dashboard
+
+### 3. Test AI Integration:
+
+Once the API key is configured:
+
+1. **Start Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+2. **Test AI Note Generation:**
+   - Sign in to your app at `http://localhost:3000`
+   - Navigate to `/notes`
+   - Click "New Note" and look for AI generation options
+   - Test prompts like "Write a note about daily productivity tips"
+   - Verify generated content appears in the note form
+
+3. **Verify API Route:**
+   ```bash
+   # Test the API endpoint directly (optional)
+   curl -X POST http://localhost:3000/api/generate-note \
+     -H "Content-Type: application/json" \
+     -d '{"prompt": "Write a note about TypeScript benefits"}'
+   ```
+
+### 4. Security Notes:
+
+- **Never commit** your `.env.local` file to Git
+- **API key is server-side only** - never exposed to the client
+- **Consider rate limiting** for production deployment
+- **Monitor usage** in OpenAI dashboard to avoid unexpected charges
+
 ## Next Steps:
 
-User synchronization complete! The next tasks will be:
-- Task 5: Implement Landing Page
-- Task 6: Design Notes Library UI
-- Task 7: Implement Note CRUD Operations
+All core functionality complete! Additional enhancements available:
+- Task 9: Implement AI Tag Suggestion  
+- Task 13: Enforce Security Best Practices
+- Task 14: Optimize Performance and Scalability
