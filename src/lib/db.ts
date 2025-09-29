@@ -71,62 +71,123 @@ export async function updateNote(
   noteId: string,
   userId: string,
   noteData: UpdateNoteData
-): Promise<NoteWithTags> {
-  const { title, content, tags } = noteData;
+): Promise<NoteWithTags | null> {
+  try {
+    const { title, content, tags } = noteData;
 
-  // If tags are provided, we need to update the tag relations
-  const updateData: {
-    title?: string;
-    content?: string;
-    tags?: {
-      set: never[];
-      connectOrCreate: Array<{
-        where: { name: string };
-        create: { name: string; source: TagSource };
-      }>;
-    };
-  } = {};
-  
-  if (title !== undefined) updateData.title = title;
-  if (content !== undefined) updateData.content = content;
-  
-  if (tags !== undefined) {
-    updateData.tags = {
-      set: [], // Clear existing tags
-      connectOrCreate: tags.map(tagName => ({
-        where: { name: tagName },
-        create: { name: tagName, source: 'MANUAL' as TagSource },
-      })),
+    // If tags are provided, we need to update the tag relations
+    const updateData: {
+      title?: string;
+      content?: string;
+      tags?: {
+        set: never[];
+        connectOrCreate: Array<{
+          where: { name: string };
+          create: { name: string; source: TagSource };
+        }>;
+      };
+    } = {};
+    
+    if (title !== undefined) updateData.title = title;
+    if (content !== undefined) updateData.content = content;
+    
+    if (tags !== undefined) {
+      updateData.tags = {
+        set: [], // Clear existing tags
+        connectOrCreate: tags.map(tagName => ({
+          where: { name: tagName },
+          create: { name: tagName, source: 'MANUAL' as TagSource },
+        })),
+      };
+    }
+
+    return await prisma.note.update({
+      where: { 
+        id: noteId,
+        userId, // Ensure user owns the note
+      },
+      data: updateData,
+      include: {
+        tags: true,
+      },
+    });
+  } catch (error) {
+    console.error('Error updating note:', error);
+    return null;
+  }
+}
+
+export async function deleteNote(noteId: string, userId: string): Promise<boolean> {
+  try {
+    await prisma.note.delete({
+      where: { 
+        id: noteId,
+        userId, // Ensure user owns the note
+      },
+    });
+    return true;
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    return false;
+  }
+}
+
+export async function getUserNotes(
+  userId: string,
+  options: {
+    search?: string;
+    tags?: string[];
+    limit?: number;
+    offset?: number;
+  } = {}
+): Promise<NoteWithTags[]> {
+  const { search, tags, limit = 50, offset = 0 } = options;
+
+  // Build where clause
+  const where: {
+    userId: string;
+    OR?: Array<{
+      title?: { contains: string; mode: 'insensitive' };
+      content?: { contains: string; mode: 'insensitive' };
+      tags?: { some: { name: { contains: string; mode: 'insensitive' } } };
+    }>;
+    tags?: { some: { name: { in: string[] } } };
+  } = { userId };
+
+  // Add search filter
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { content: { contains: search, mode: 'insensitive' } },
+      {
+        tags: {
+          some: {
+            name: { contains: search, mode: 'insensitive' }
+          }
+        }
+      }
+    ];
+  }
+
+  // Add tag filter
+  if (tags && tags.length > 0) {
+    where.tags = {
+      some: {
+        name: { in: tags }
+      }
     };
   }
 
-  return prisma.note.update({
-    where: { id: noteId },
-    data: updateData,
-    include: {
-      tags: true,
-    },
-  });
-}
-
-export async function deleteNote(noteId: string, userId: string): Promise<void> {
-  await prisma.note.delete({
-    where: { 
-      id: noteId,
-      userId, // Ensure user owns the note
-    },
-  });
-}
-
-export async function getUserNotes(userId: string) {
   return prisma.note.findMany({
-    where: { userId },
+    where,
     include: {
       tags: true,
     },
     orderBy: {
       updatedAt: 'desc',
     },
+    take: limit,
+    skip: offset,
   });
 }
 
