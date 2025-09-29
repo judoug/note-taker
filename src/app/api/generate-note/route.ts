@@ -2,17 +2,38 @@ import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { OpenAI } from 'openai';
 import { z } from 'zod';
+import { env } from '@/lib/env-validation';
 
-// Input validation schema
+// Input validation schema with enhanced security
 const generateNoteSchema = z.object({
-  prompt: z.string().min(1, 'Prompt is required').max(1000, 'Prompt too long'),
-  tone: z.enum(['professional', 'casual', 'creative', 'academic']).optional().default('casual'),
-  length: z.enum(['short', 'medium', 'long']).optional().default('medium'),
+  prompt: z.string()
+    .min(10, 'Prompt must be at least 10 characters')
+    .max(500, 'Prompt cannot exceed 500 characters')
+    .refine(
+      (prompt) => {
+        // Security check: Block potentially harmful prompts
+        const dangerousPatterns = [
+          /ignore.{0,20}previous.{0,20}instructions?/i,
+          /system.{0,10}prompt/i,
+          /role.{0,10}play/i,
+          /pretend.{0,10}(you|to).{0,10}are/i,
+          /<script|javascript:/i,
+          /sql.{0,10}injection/i,
+        ];
+        return !dangerousPatterns.some(pattern => pattern.test(prompt));
+      },
+      { message: 'Prompt contains potentially unsafe content' }
+    ),
+  tone: z.enum(['professional', 'casual', 'creative', 'academic']).default('professional'),
+  length: z.enum(['short', 'medium', 'long']).default('medium'),
 });
 
-// Initialize OpenAI client
+// Initialize OpenAI client with validated environment
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: env.OPENAI_API_KEY,
+  // Additional security options
+  timeout: 30000, // 30 second timeout
+  maxRetries: 2,
 });
 
 // Length mapping for token limits
@@ -38,17 +59,51 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if OpenAI API key is configured
-    if (!process.env.OPENAI_API_KEY) {
+    // Additional security: Check request size
+    const contentLength = request.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 2048) { // 2KB limit
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
+        { error: 'Request too large' },
+        { status: 413 }
       );
     }
 
-    // Parse and validate request body
-    const body = await request.json();
+    // Additional security: Check request origin in production
+    if (env.NODE_ENV === 'production') {
+      const origin = request.headers.get('origin');
+      const referer = request.headers.get('referer');
+      
+      if (!origin && !referer) {
+        return NextResponse.json(
+          { error: 'Invalid request origin' },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Parse and validate request body with size limit
+    let body;
+    try {
+      const text = await request.text();
+      if (text.length > 1024) { // 1KB limit for JSON
+        return NextResponse.json(
+          { error: 'Request body too large' },
+          { status: 413 }
+        );
+      }
+      body = JSON.parse(text);
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
+    // Validate input schema
     const { prompt, tone, length } = generateNoteSchema.parse(body);
+
+    // Additional security: Log AI generation attempts (for monitoring)
+    console.log(`AI generation request from user ${user.id}: ${prompt.substring(0, 50)}...`);
 
     // Create system prompt based on tone and length
     const systemPrompt = `You are an AI assistant helping users create well-structured notes. 

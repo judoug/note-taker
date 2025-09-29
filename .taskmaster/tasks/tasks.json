@@ -373,8 +373,41 @@
           3,
           4
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Enforce HTTPS and Secure Transport",
+            "description": "Ensure all environments use HTTPS to encrypt data in transit and prevent man-in-the-middle attacks. Configure Next.js 15 deployment (e.g., Vercel) to enforce HTTPS and redirect HTTP traffic. Verify Clerk authentication endpoints and OpenAI API calls are made over secure connections.",
+            "dependencies": [],
+            "details": "Check deployment settings for automatic HTTPS enforcement. Test all API endpoints and authentication flows for secure transport. Document HTTPS enforcement in deployment scripts.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Protect Sensitive Endpoints and Implement Rate Limiting",
+            "description": "Secure all sensitive API routes using Clerk authentication middleware and role-based access control. Implement rate limiting for OpenAI API endpoints and other critical routes to prevent abuse and denial-of-service attacks.",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Apply Clerk middleware to API and app routes to require authentication. Configure public and protected routes explicitly. Integrate rate limiting middleware (e.g., Next.js middleware or third-party library) for endpoints handling sensitive data or external API calls.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Enforce Secure Configuration: CSP, Secrets Management, and Database Encryption",
+            "description": "Set a strict Content Security Policy (CSP) to mitigate XSS and data injection risks. Store all secrets (Clerk, OpenAI, NeonDB credentials) in environment variables and never expose them client-side. Ensure NeonDB encryption at rest is enabled and Prisma queries are parameterized.",
+            "dependencies": [
+              "13.1",
+              "13.2"
+            ],
+            "details": "Configure CSP headers in Next.js. Audit environment variable usage and restrict access to secrets. Verify NeonDB encryption settings and review Prisma query code for parameterization.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 14,
@@ -409,7 +442,7 @@
     ],
     "metadata": {
       "created": "2025-09-29T19:16:22.146Z",
-      "updated": "2025-09-29T21:14:54.761Z",
+      "updated": "2025-09-29T21:33:35.918Z",
       "description": "Tasks for master context"
     }
   }
