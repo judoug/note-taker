@@ -6,7 +6,8 @@ import type {
   GenerateNoteRequest, 
   GenerateNoteResponse,
   SuggestTagsRequest,
-  SuggestTagsResponse
+  SuggestTagsResponse,
+  NotesFilterParams
 } from '@/types';
 
 // Base API configuration
@@ -71,17 +72,17 @@ async function apiRequest<T>(
 
 // Notes API functions
 export const notesApi = {
-  // Get all notes for the current user
-  async getAll(params?: {
-    search?: string;
-    tags?: string[];
-    limit?: number;
-    offset?: number;
-  }): Promise<ApiResponse<NoteWithTags[]>> {
+  // Get all notes for the current user with advanced filtering
+  async getAll(params?: NotesFilterParams): Promise<ApiResponse<NoteWithTags[]>> {
     const searchParams = new URLSearchParams();
     
     if (params?.search) searchParams.set('search', params.search);
     if (params?.tags?.length) searchParams.set('tags', params.tags.join(','));
+    if (params?.tagSource && params.tagSource !== 'ALL') searchParams.set('tagSource', params.tagSource);
+    if (params?.dateFrom) searchParams.set('dateFrom', params.dateFrom.toISOString());
+    if (params?.dateTo) searchParams.set('dateTo', params.dateTo.toISOString());
+    if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
+    if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.offset) searchParams.set('offset', params.offset.toString());
     

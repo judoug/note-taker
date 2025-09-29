@@ -385,8 +385,66 @@
           7,
           9
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Extend Notes API for Multi-Criteria Filtering",
+            "description": "Update the notes API to support filtering by tags (AI and manual), date ranges, content search, note creation source, and combined filters.",
+            "dependencies": [],
+            "details": "Design API endpoints to accept multiple filter parameters. Ensure support for both AI-suggested and manually added tags, date range queries, full-text search, and note source filtering. Document the API changes for frontend integration.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Update Prisma Queries for Efficient Filtering",
+            "description": "Implement optimized Prisma query logic to handle multi-criteria filters and ensure performant database access.",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Refactor Prisma queries to support complex filter combinations. Use indexes and query optimization techniques for scalability. Validate query results for all filter types and combinations.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Enhance UI with Intuitive Filter Controls",
+            "description": "Design and implement user interface components for selecting and combining filters in the notes view.",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Add filter controls for tags (AI/manual), date pickers, search input, and source selectors. Ensure the UI supports combining multiple filters and provides clear feedback on active filters. Focus on usability and accessibility.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate Filters with React Query Hooks",
+            "description": "Update React Query hooks to accept filter parameters and fetch filtered notes from the API.",
+            "dependencies": [
+              "10.1",
+              "10.2",
+              "10.3"
+            ],
+            "details": "Modify React Query hooks to pass filter criteria to the API. Ensure hooks update the notes list in real time as filters change. Handle loading, error, and empty states gracefully.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test Filter Combinations and Edge Cases",
+            "description": "Develop and execute tests for all filter combinations, including edge cases and invalid inputs.",
+            "dependencies": [
+              "10.2",
+              "10.3",
+              "10.4"
+            ],
+            "details": "Write automated and manual tests to verify correct filtering behavior. Test combinations of tags, dates, content search, and sources. Validate performance and correctness for large datasets and unusual filter scenarios.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 11,
@@ -496,7 +554,7 @@
     ],
     "metadata": {
       "created": "2025-09-29T19:16:22.146Z",
-      "updated": "2025-09-29T21:55:27.865Z",
+      "updated": "2025-09-29T22:11:12.441Z",
       "description": "Tasks for master context"
     }
   }

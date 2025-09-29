@@ -1,23 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notesApi } from '@/lib/api';
-import type { CreateNoteData, UpdateNoteData, NoteWithTags } from '@/types';
+import type { CreateNoteData, UpdateNoteData, NoteWithTags, NotesFilterParams } from '@/types';
 
 // Query keys
 export const noteKeys = {
   all: ['notes'] as const,
   lists: () => [...noteKeys.all, 'list'] as const,
-  list: (filters: Record<string, unknown>) => [...noteKeys.lists(), filters] as const,
+  list: (filters: NotesFilterParams) => [...noteKeys.lists(), filters] as const,
   details: () => [...noteKeys.all, 'detail'] as const,
   detail: (id: string) => [...noteKeys.details(), id] as const,
 };
 
-// Get all notes with filters
-export function useNotes(filters?: {
-  search?: string;
-  tags?: string[];
-  limit?: number;
-  offset?: number;
-}) {
+// Get all notes with advanced filters
+export function useNotes(filters?: NotesFilterParams) {
   return useQuery({
     queryKey: noteKeys.list(filters || {}),
     queryFn: () => notesApi.getAll(filters),

@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { UserButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { NotesToolbar } from '@/components/notes/NotesToolbar';
 import { NotesView } from '@/components/notes/NotesView';
 import { CreateNoteForm } from '@/components/notes/CreateNoteForm';
 import { EditNoteForm } from '@/components/notes/EditNoteForm';
 import { DeleteNoteDialog } from '@/components/notes/DeleteNoteDialog';
 import { AIGenerateNoteForm } from '@/components/notes/AIGenerateNoteForm';
+import { AdvancedFilters } from '@/components/notes/AdvancedFilters';
 import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAINoteMutation } from '@/hooks/useAIGeneration';
-import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData } from '@/types';
+import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData, NotesFilterState, FilterOption } from '@/types';
 import type { Tag } from '@prisma/client';
 
 export default function NotesPage() {
@@ -21,9 +21,17 @@ export default function NotesPage() {
   
   // UI State
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Advanced Filter State
+  const [filters, setFilters] = useState<NotesFilterState>({
+    search: '',
+    selectedTags: [],
+    tagSource: 'ALL',
+    dateRange: {},
+    sortBy: 'updated',
+    sortOrder: 'desc'
+  });
   
   // Modal States
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -41,8 +49,13 @@ export default function NotesPage() {
     error: notesError,
     refetch: refetchNotes 
   } = useNotes({
-    search: searchValue || undefined,
-    tags: selectedTags.length > 0 ? selectedTags : undefined,
+    search: filters.search || undefined,
+    tags: filters.selectedTags.length > 0 ? filters.selectedTags : undefined,
+    tagSource: filters.tagSource,
+    dateFrom: filters.dateRange.from,
+    dateTo: filters.dateRange.to,
+    sortBy: filters.sortBy,
+    sortOrder: filters.sortOrder,
   });
 
   const createNoteMutation = useCreateNote();
@@ -75,6 +88,13 @@ export default function NotesPage() {
       setAllTags(Array.from(uniqueTags.values()));
     }
   }, [notes]);
+
+  // Prepare available tags for filter component
+  const availableTagsForFilter: FilterOption[] = allTags.map(tag => ({
+    value: tag.name,
+    label: tag.name,
+    count: notes.filter(note => note.tags.some(noteTag => noteTag.name === tag.name)).length
+  }));
 
   // Show loading state while checking authentication
   if (!isLoaded || isLoading || notesLoading) {
@@ -203,18 +223,50 @@ export default function NotesPage() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          <NotesToolbar
-            searchValue={searchValue}
-            onSearchChange={setSearchValue}
-            selectedTags={selectedTags}
-            onTagsChange={setSelectedTags}
-            availableTags={allTags}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-            onCreateNote={handleNewNoteClick}
-            onAIGenerate={handleAIGenerateClick}
-            notesCount={notes.length}
+          {/* Advanced Filters */}
+          <AdvancedFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            availableTags={availableTagsForFilter}
+            isLoading={notesLoading}
+            totalCount={notes.length}
+            className="mb-6"
           />
+
+          {/* Action Toolbar */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleNewNoteClick}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Create Note
+              </button>
+              
+              <button
+                onClick={handleAIGenerateClick}
+                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                AI Generate
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600">View:</span>
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+              >
+                Grid
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+              >
+                List
+              </button>
+            </div>
+          </div>
 
           <NotesView
             mode={viewMode}

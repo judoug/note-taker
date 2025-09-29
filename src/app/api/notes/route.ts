@@ -16,6 +16,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
     const tags = searchParams.get('tags')?.split(',').filter(Boolean) || [];
+    const tagSource = searchParams.get('tagSource') as 'AI' | 'MANUAL' | 'ALL' || 'ALL';
+    const dateFrom = searchParams.get('dateFrom') ? new Date(searchParams.get('dateFrom')!) : undefined;
+    const dateTo = searchParams.get('dateTo') ? new Date(searchParams.get('dateTo')!) : undefined;
+    const sortBy = searchParams.get('sortBy') as 'updated' | 'created' | 'title' || 'updated';
+    const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' || 'desc';
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
@@ -29,6 +34,11 @@ export async function GET(request: NextRequest) {
     const notes = await getUserNotes(dbUser.id, {
       search,
       tags,
+      tagSource,
+      dateFrom,
+      dateTo,
+      sortBy,
+      sortOrder,
       limit,
       offset,
     });

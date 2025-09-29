@@ -137,45 +137,105 @@ export async function getUserNotes(
   options: {
     search?: string;
     tags?: string[];
+    tagSource?: 'AI' | 'MANUAL' | 'ALL';
+    dateFrom?: Date;
+    dateTo?: Date;
+    sortBy?: 'updated' | 'created' | 'title';
+    sortOrder?: 'asc' | 'desc';
     limit?: number;
     offset?: number;
   } = {}
 ): Promise<NoteWithTags[]> {
-  const { search, tags, limit = 50, offset = 0 } = options;
+  const { 
+    search, 
+    tags, 
+    tagSource = 'ALL',
+    dateFrom,
+    dateTo,
+    sortBy = 'updated',
+    sortOrder = 'desc',
+    limit = 50, 
+    offset = 0 
+  } = options;
 
-  // Build where clause
-  const where: {
-    userId: string;
-    OR?: Array<{
-      title?: { contains: string; mode: 'insensitive' };
-      content?: { contains: string; mode: 'insensitive' };
-      tags?: { some: { name: { contains: string; mode: 'insensitive' } } };
-    }>;
-    tags?: { some: { name: { in: string[] } } };
-  } = { userId };
+  // Build where clause with proper typing
+  const where: Record<string, unknown> = { userId };
+  const andConditions: Record<string, unknown>[] = [];
 
-  // Add search filter
+  // Add search filter (content, title, or tag names)
   if (search) {
-    where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { content: { contains: search, mode: 'insensitive' } },
-      {
-        tags: {
-          some: {
-            name: { contains: search, mode: 'insensitive' }
+    andConditions.push({
+      OR: [
+        { title: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } },
+        {
+          tags: {
+            some: {
+              name: { contains: search, mode: 'insensitive' }
+            }
           }
         }
-      }
-    ];
+      ]
+    });
   }
 
-  // Add tag filter
+  // Add specific tag filter
   if (tags && tags.length > 0) {
-    where.tags = {
-      some: {
-        name: { in: tags }
+    andConditions.push({
+      tags: {
+        some: {
+          name: { in: tags }
+        }
       }
-    };
+    });
+  }
+
+  // Add tag source filter (AI vs Manual tags)
+  if (tagSource !== 'ALL') {
+    andConditions.push({
+      tags: {
+        some: {
+          source: tagSource
+        }
+      }
+    });
+  }
+
+  // Add date range filters
+  if (dateFrom || dateTo) {
+    const dateFilter: Record<string, Date> = {};
+    if (dateFrom) {
+      dateFilter.gte = dateFrom;
+    }
+    if (dateTo) {
+      // Add one day to dateTo to include the entire day
+      const endDate = new Date(dateTo);
+      endDate.setHours(23, 59, 59, 999);
+      dateFilter.lte = endDate;
+    }
+    andConditions.push({
+      createdAt: dateFilter
+    });
+  }
+
+  // Combine all conditions
+  if (andConditions.length > 0) {
+    where.AND = andConditions;
+  }
+
+  // Determine sort order
+  const orderBy: Record<string, 'asc' | 'desc'> = {};
+  switch (sortBy) {
+    case 'created':
+      orderBy.createdAt = sortOrder;
+      break;
+    case 'title':
+      orderBy.title = sortOrder;
+      break;
+    case 'updated':
+    default:
+      orderBy.updatedAt = sortOrder;
+      break;
   }
 
   return prisma.note.findMany({
@@ -183,9 +243,7 @@ export async function getUserNotes(
     include: {
       tags: true,
     },
-    orderBy: {
-      updatedAt: 'desc',
-    },
+    orderBy,
     take: limit,
     skip: offset,
   });

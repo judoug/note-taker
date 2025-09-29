@@ -127,3 +127,34 @@ export interface SuggestTagsResponse {
     model: string
   }
 }
+
+// Advanced Filtering types
+export interface NotesFilterParams {
+  search?: string
+  tags?: string[]
+  tagSource?: 'AI' | 'MANUAL' | 'ALL'
+  dateFrom?: Date
+  dateTo?: Date
+  sortBy?: 'updated' | 'created' | 'title'
+  sortOrder?: 'asc' | 'desc'
+  limit?: number
+  offset?: number
+}
+
+export interface NotesFilterState {
+  search: string
+  selectedTags: string[]
+  tagSource: 'AI' | 'MANUAL' | 'ALL'
+  dateRange: {
+    from?: Date
+    to?: Date
+  }
+  sortBy: 'updated' | 'created' | 'title'
+  sortOrder: 'asc' | 'desc'
+}
+
+export interface FilterOption {
+  value: string
+  label: string
+  count?: number
+}
