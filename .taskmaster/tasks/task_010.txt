@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Implement Advanced Note Filtering
+# Status: pending
+# Dependencies: 7, 9
+# Priority: medium
+# Description: Enable filtering notes by tags, date, and AI-suggested categories.
+# Details:
+Extend the notes API and UI to support filtering by multiple criteria. Use Prisma query filters for efficient DB queries. Update React Query hooks to accept filter params.
+
+# Test Strategy:
+Apply filters and verify correct notes are displayed. Test combinations of filters and edge cases.

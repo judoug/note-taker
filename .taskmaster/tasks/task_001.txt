@@ -1,0 +1,11 @@
+# Task ID: 1
+# Title: Initialize Next.js Project with App Router
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Set up a new Next.js project using the App Router, configure TypeScript, Tailwind CSS, and project structure.
+# Details:
+Use Next.js 15+ with the App Router. Initialize with `npx create-next-app@latest --typescript`. Install Tailwind CSS (`npm install -D tailwindcss postcss autoprefixer`), initialize config, and set up global styles. Structure folders for app, components, lib, and api. Ensure TypeScript strict mode is enabled.
+
+# Test Strategy:
+Run `npm run dev` and verify the app loads. Check Tailwind classes render correctly. Confirm TypeScript errors are absent.

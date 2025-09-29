@@ -1,0 +1,49 @@
+# Task ID: 8
+# Title: Integrate OpenAI API for Note Generation
+# Status: pending
+# Dependencies: 7
+# Priority: high
+# Description: Allow users to generate notes from prompts using OpenAI API.
+# Details:
+Set up OpenAI API key in environment. Create a Next.js API route that accepts a prompt, calls OpenAI's GPT-4 Turbo endpoint, and returns generated note content. Add UI for prompt input and display generated notes.
+
+# Test Strategy:
+Submit prompts and verify AI-generated notes appear. Test with various prompt types. Handle API errors gracefully.
+
+# Subtasks:
+## 1. Set Up OpenAI API Key and Environment Variables [pending]
+### Dependencies: None
+### Description: Configure the OpenAI API key securely in the environment by creating a .env.local file and adding the key as OPENAI_API_KEY.
+### Details:
+Obtain an OpenAI API key from the OpenAI dashboard. Add OPENAI_API_KEY=yourApiKey to .env.local in the project root. Ensure the key is not exposed in client-side code.
+
+## 2. Create Next.js API Route for Note Generation [pending]
+### Dependencies: 8.1
+### Description: Implement a Next.js API route that accepts a prompt and returns generated note content.
+### Details:
+Add a file in /pages/api (or /app/api for App Router) to handle POST requests with a prompt. Structure the endpoint to parse the prompt and prepare for OpenAI API calls.
+
+## 3. Implement Server-Side Call to OpenAI GPT-4 Turbo [pending]
+### Dependencies: 8.2
+### Description: Integrate the OpenAI SDK or fetch API to call the GPT-4 Turbo endpoint from the server-side API route.
+### Details:
+Use the OpenAI npm package or direct fetch to send the prompt to OpenAI's GPT-4 Turbo endpoint. Parse and return the generated note content in the API response.
+
+## 4. Build Prompt Input UI Component [pending]
+### Dependencies: 8.3
+### Description: Develop a user interface component for entering prompts and submitting them to the API route.
+### Details:
+Create a React component with a text input and submit button. Connect the component to the API route using fetch or axios, sending the prompt and handling the response.
+
+## 5. Display Generated Notes in the UI [pending]
+### Dependencies: 8.4
+### Description: Render the generated note content returned from the API in the user interface.
+### Details:
+Update the UI to show the generated notes below the prompt input. Ensure notes are displayed clearly and update dynamically after each submission.
+
+## 6. Handle API Errors and Edge Cases [pending]
+### Dependencies: 8.5
+### Description: Implement robust error handling for API failures, invalid prompts, and edge cases in both the API route and UI.
+### Details:
+Add error messages and fallback UI for failed API calls, empty prompts, and rate limits. Log errors server-side and provide user feedback client-side.
+

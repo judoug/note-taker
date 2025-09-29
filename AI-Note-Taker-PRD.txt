@@ -1,0 +1,134 @@
+---
+
+# Product Requirements Document (PRD)
+
+**Product Name:** AI Note Taker
+**Owner:** JD (Product Manager)
+**Date:** September 2025
+**Version:** v1.0
+
+---
+
+## 1. Overview
+
+This is a browser-based note-taking application that leverages AI to help users create, organize, and manage notes efficiently. Users will be able to sign up, log in, and maintain a library of notes stored in the cloud. The app includes AI-powered functionality such as generating notes, suggesting tags, and filtering by advanced criteria.
+
+The app will be developed using **Next.js** with **NeonDB (via Prisma)** for data persistence, **Clerk** for authentication, and **OpenAI API** for AI-powered features.
+
+---
+
+## 2. Goals and Non-Goals
+
+**Goals**
+
+* Provide a clean, intuitive interface for note creation and management.
+* Integrate AI features (auto-note generation, smart tagging).
+* Enable fast and reliable authentication and data storage.
+* Ensure responsive design across devices.
+
+**Non-Goals**
+
+* Offline-first support (not part of v1).
+* Mobile apps (this PRD covers only the browser-based version).
+* Real-time collaborative editing (may be considered in later versions).
+
+---
+
+## 3. User Stories
+
+* **As a new user**, I want to view a landing page that explains the app so I can decide whether to sign up.
+* **As a user**, I want to sign up or log in securely so I can access my personal notes.
+* **As a user**, I want to create, edit, and delete notes so I can maintain my library.
+* **As a user**, I want to filter notes by tags, date, and AI-suggested categories so I can find information quickly.
+* **As a user**, I want AI-generated notes from a given prompt so I can save time.
+* **As a user**, I want AI to auto-suggest tags when I write notes so my library stays organized.
+
+---
+
+## 4. Features
+
+### 4.1 Landing Page
+
+* Hero section describing what the app does.
+* Call-to-action buttons (Sign Up, Login).
+* Responsive layout.
+
+### 4.2 Authentication (via Clerk)
+
+* Sign-up with email, Google, or GitHub.
+* Secure login/logout.
+* Session management.
+
+### 4.3 Notes Library
+
+* List view of all notes with title, preview, and tags.
+* Create, edit, delete notes.
+* Search bar with advanced filters (date, tags, AI tags).
+
+### 4.4 AI Features (via OpenAI API)
+
+* Generate notes from a user prompt.
+* Suggest tags based on note content.
+* Provide AI-based summaries of longer notes (stretch goal).
+
+### 4.5 Database (NeonDB + Prisma)
+
+* User table: profile, auth ID, preferences.
+* Notes table: content, metadata, timestamps.
+* Tags table: user-generated + AI-suggested tags.
+
+---
+
+## 5. Architecture
+
+### Front-End
+
+* Framework: **Next.js (App Router)**.
+* Styling: Tailwind CSS.
+* State management: React Query (or SWR).
+* Responsive design (desktop, tablet, mobile).
+
+### Back-End
+
+* Next.js API routes.
+* Integration with Clerk for authentication.
+* Integration with OpenAI API for AI features.
+
+### Database
+
+* **NeonDB** (PostgreSQL) with **Prisma ORM**.
+* Schema:
+
+  * Users (id, email, auth_id, created_at).
+  * Notes (id, user_id, content, title, created_at, updated_at).
+  * Tags (id, note_id, name, source [AI/manual]).
+
+---
+
+## 6. Non-Functional Requirements
+
+* **Performance:** Notes should load in <200ms on average.
+* **Security:** Data encrypted at rest and in transit.
+* **Scalability:** Should handle 10k+ users in v1.
+* **Reliability:** 99.9% uptime target.
+* **Responsiveness:** Works seamlessly on desktop, tablet, and mobile browsers.
+
+---
+
+## 7. Design Guidelines
+
+* Reference: [Figma mock-up](http://figma.com/make/gRrhTOIn850H5UdTRnQbIl/AI-Note-Taking-App?node-id=0-4&t=OGCnZ9fH9Fm3P2Lt-0).
+* Pixel-perfect implementation against design tokens (colors, spacing, typography).
+* Light mode (v1), Dark mode (future).
+
+---
+
+## 8. Success Metrics
+
+* **Activation rate:** % of new signups that create a note within 24 hours.
+* **Retention:** % of users returning weekly.
+* **AI usage:** % of notes with AI-generated content or tags.
+* **Engagement:** Average number of notes created per user.
+
+---
+

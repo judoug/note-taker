@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Design Notes Library UI
+# Status: pending
+# Dependencies: 2, 4, 5
+# Priority: high
+# Description: Build the main notes dashboard with list view, search, and filters.
+# Details:
+Implement a responsive notes list using Tailwind CSS. Show note title, preview, and tags. Add a search bar and filter controls for date, tags, and AI tags. Use React Query (or SWR) for data fetching and caching.
+
+# Test Strategy:
+Verify notes display correctly for different users. Test search and filter interactions. Check responsiveness and Figma alignment.

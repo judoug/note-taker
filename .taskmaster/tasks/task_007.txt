@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Implement Note CRUD Operations
+# Status: pending
+# Dependencies: 3, 4, 6
+# Priority: high
+# Description: Enable users to create, edit, and delete notes with real-time UI updates.
+# Details:
+Create Next.js API routes for note CRUD using Prisma. On the front end, use forms for note creation/editing and confirmation dialogs for deletion. Use React Query mutations for optimistic UI updates.
+
+# Test Strategy:
+Create, edit, and delete notes as a user. Confirm DB changes and UI updates. Test error handling and edge cases.

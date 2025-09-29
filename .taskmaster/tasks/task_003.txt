@@ -1,0 +1,11 @@
+# Task ID: 3
+# Title: Set Up NeonDB and Prisma ORM
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Configure NeonDB (PostgreSQL) and Prisma ORM for data persistence.
+# Details:
+Create a NeonDB instance. Install `@prisma/client` and `prisma`. Initialize Prisma schema with User, Note, and Tag models as per PRD. Configure database URL in `.env`. Run `prisma migrate dev` to create tables.
+
+# Test Strategy:
+Run Prisma Studio (`npx prisma studio`) and verify tables exist. Test basic CRUD via Prisma client in a script.

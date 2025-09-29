@@ -1,0 +1,416 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Next.js Project with App Router",
+        "description": "Set up a new Next.js project using the App Router, configure TypeScript, Tailwind CSS, and project structure.",
+        "details": "Use Next.js 15+ with the App Router. Initialize with `npx create-next-app@latest --typescript`. Install Tailwind CSS (`npm install -D tailwindcss postcss autoprefixer`), initialize config, and set up global styles. Structure folders for app, components, lib, and api. Ensure TypeScript strict mode is enabled.",
+        "testStrategy": "Run `npm run dev` and verify the app loads. Check Tailwind classes render correctly. Confirm TypeScript errors are absent.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Integrate Clerk Authentication",
+        "description": "Add Clerk for authentication with email, Google, and GitHub providers. Set up sign-up, login, and session management.",
+        "details": "Install `@clerk/nextjs` and follow Clerk's Next.js App Router integration guide. Configure ClerkProvider in `layout.tsx`. Add sign-in and sign-up routes using Clerk's drop-in components. Set up environment variables from Clerk dashboard. Protect routes using Clerk middleware in `middleware.ts`.",
+        "testStrategy": "Sign up and log in with email and Google/GitHub. Verify session persistence and protected route access. Check user context is available.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Clerk Dependencies",
+            "description": "Install the @clerk/nextjs package in the Next.js project to enable Clerk authentication features.",
+            "dependencies": [],
+            "details": "Run 'npm install @clerk/nextjs' in the project root. Ensure the package is added to package.json and node_modules.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Configure ClerkProvider in Layout",
+            "description": "Set up the ClerkProvider in the main layout file to initialize Clerk across the application.",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Import ClerkProvider from '@clerk/nextjs' and wrap the application's root layout (e.g., layout.tsx) with it to provide authentication context.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Set Up Clerk Environment Variables",
+            "description": "Configure environment variables required by Clerk using values from the Clerk dashboard.",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Add Clerk frontend and backend API keys, and any OAuth provider secrets (Google, GitHub) to the .env.local file as per Clerk documentation.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Add Sign-In and Sign-Up Routes",
+            "description": "Create dedicated routes for user sign-in and sign-up using Clerk's recommended structure.",
+            "dependencies": [
+              "2.2",
+              "2.3"
+            ],
+            "details": "Add /sign-in and /sign-up routes (or folders) in the app directory, preparing them for Clerk's drop-in components.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Clerk Drop-In Components",
+            "description": "Embed Clerk's SignIn and SignUp components into the respective routes for authentication UI.",
+            "dependencies": [
+              "2.4"
+            ],
+            "details": "Import and render <SignIn /> and <SignUp /> components from '@clerk/nextjs' in the sign-in and sign-up route files.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implement Route Protection with Middleware",
+            "description": "Set up Clerk middleware to protect application routes and enforce authentication.",
+            "dependencies": [
+              "2.2",
+              "2.3"
+            ],
+            "details": "Create or update middleware.ts to use Clerk's authMiddleware, specifying protected routes and configuring redirects for unauthenticated users.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Test Authentication Flows and Session Management",
+            "description": "Verify that sign-up, login, OAuth, session persistence, and protected routes function as expected.",
+            "dependencies": [
+              "2.5",
+              "2.6"
+            ],
+            "details": "Test email, Google, and GitHub sign-in/sign-up. Confirm session persistence, user context availability, and that protected routes are inaccessible without authentication.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Set Up NeonDB and Prisma ORM",
+        "description": "Configure NeonDB (PostgreSQL) and Prisma ORM for data persistence.",
+        "details": "Create a NeonDB instance. Install `@prisma/client` and `prisma`. Initialize Prisma schema with User, Note, and Tag models as per PRD. Configure database URL in `.env`. Run `prisma migrate dev` to create tables.",
+        "testStrategy": "Run Prisma Studio (`npx prisma studio`) and verify tables exist. Test basic CRUD via Prisma client in a script.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Sync Clerk Users with Database",
+        "description": "Mirror Clerk users into the User table in NeonDB upon authentication.",
+        "details": "Implement a utility (e.g., `syncUserWithDatabase`) that fetches Clerk user info after sign-in and upserts into the User table keyed by Clerk ID. Use Prisma for DB operations. Optionally, use Clerk webhooks for user creation.",
+        "testStrategy": "Sign in as a new user and verify a corresponding User record is created/updated in the database.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design User Sync Utility Interface",
+            "description": "Define the TypeScript interface and function signature for the user sync utility (e.g., `syncUserWithDatabase`). Specify required Clerk user fields, expected input/output, and error handling strategy.",
+            "dependencies": [],
+            "details": "Determine which Clerk user properties (e.g., id, email, name, avatar) are needed in the User table. Document the interface and add type annotations for Prisma compatibility.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Upsert Logic with Prisma",
+            "description": "Develop the core logic to upsert Clerk user data into the NeonDB User table using Prisma, keyed by Clerk ID.",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Write a function that takes Clerk user data and performs an upsert (insert or update) in the User table. Ensure idempotency and handle potential race conditions.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate Sync on Authentication Event",
+            "description": "Trigger the user sync utility after successful Clerk authentication (sign-in or sign-up) to ensure the User table is updated in real time.",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Hook into Clerk's authentication flow (e.g., via session callbacks or middleware) to invoke the sync utility whenever a user signs in or up.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Set Up Clerk Webhooks for User Events (Optional)",
+            "description": "Configure Clerk webhooks to notify your backend of user.created and user.updated events, and implement handlers to sync user data accordingly.",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Register webhook endpoints in the Clerk dashboard. Implement secure webhook handlers that verify Clerk signatures and call the sync utility. Prepare for eventual consistency and webhook retries.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test User Creation and Update Flows",
+            "description": "Verify that new Clerk users and updates are correctly mirrored in the NeonDB User table through both authentication-triggered sync and webhook-triggered sync.",
+            "dependencies": [
+              "4.3",
+              "4.4"
+            ],
+            "details": "Sign in as new and existing users, update user profiles, and confirm User table records are created/updated as expected. Simulate webhook delivery and failure scenarios.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Implement Landing Page",
+        "description": "Create a responsive landing page with hero section, app description, and call-to-action buttons.",
+        "details": "Use Next.js and Tailwind CSS to build the landing page. Reference Figma design tokens for colors, spacing, and typography. Add Sign Up and Login buttons that route to Clerk flows.",
+        "testStrategy": "Check layout on desktop, tablet, and mobile. Validate navigation to sign-up/login. Compare with Figma for pixel accuracy.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Design Notes Library UI",
+        "description": "Build the main notes dashboard with list view, search, and filters.",
+        "details": "Implement a responsive notes list using Tailwind CSS. Show note title, preview, and tags. Add a search bar and filter controls for date, tags, and AI tags. Use React Query (or SWR) for data fetching and caching.",
+        "testStrategy": "Verify notes display correctly for different users. Test search and filter interactions. Check responsiveness and Figma alignment.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Note CRUD Operations",
+        "description": "Enable users to create, edit, and delete notes with real-time UI updates.",
+        "details": "Create Next.js API routes for note CRUD using Prisma. On the front end, use forms for note creation/editing and confirmation dialogs for deletion. Use React Query mutations for optimistic UI updates.",
+        "testStrategy": "Create, edit, and delete notes as a user. Confirm DB changes and UI updates. Test error handling and edge cases.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Integrate OpenAI API for Note Generation",
+        "description": "Allow users to generate notes from prompts using OpenAI API.",
+        "details": "Set up OpenAI API key in environment. Create a Next.js API route that accepts a prompt, calls OpenAI's GPT-4 Turbo endpoint, and returns generated note content. Add UI for prompt input and display generated notes.",
+        "testStrategy": "Submit prompts and verify AI-generated notes appear. Test with various prompt types. Handle API errors gracefully.",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up OpenAI API Key and Environment Variables",
+            "description": "Configure the OpenAI API key securely in the environment by creating a .env.local file and adding the key as OPENAI_API_KEY.",
+            "dependencies": [],
+            "details": "Obtain an OpenAI API key from the OpenAI dashboard. Add OPENAI_API_KEY=yourApiKey to .env.local in the project root. Ensure the key is not exposed in client-side code.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Create Next.js API Route for Note Generation",
+            "description": "Implement a Next.js API route that accepts a prompt and returns generated note content.",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Add a file in /pages/api (or /app/api for App Router) to handle POST requests with a prompt. Structure the endpoint to parse the prompt and prepare for OpenAI API calls.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Server-Side Call to OpenAI GPT-4 Turbo",
+            "description": "Integrate the OpenAI SDK or fetch API to call the GPT-4 Turbo endpoint from the server-side API route.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Use the OpenAI npm package or direct fetch to send the prompt to OpenAI's GPT-4 Turbo endpoint. Parse and return the generated note content in the API response.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Build Prompt Input UI Component",
+            "description": "Develop a user interface component for entering prompts and submitting them to the API route.",
+            "dependencies": [
+              "8.3"
+            ],
+            "details": "Create a React component with a text input and submit button. Connect the component to the API route using fetch or axios, sending the prompt and handling the response.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Display Generated Notes in the UI",
+            "description": "Render the generated note content returned from the API in the user interface.",
+            "dependencies": [
+              "8.4"
+            ],
+            "details": "Update the UI to show the generated notes below the prompt input. Ensure notes are displayed clearly and update dynamically after each submission.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Handle API Errors and Edge Cases",
+            "description": "Implement robust error handling for API failures, invalid prompts, and edge cases in both the API route and UI.",
+            "dependencies": [
+              "8.5"
+            ],
+            "details": "Add error messages and fallback UI for failed API calls, empty prompts, and rate limits. Log errors server-side and provide user feedback client-side.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Implement AI Tag Suggestion",
+        "description": "Auto-suggest tags for notes using OpenAI based on note content.",
+        "details": "On note creation/edit, send note content to a Next.js API route that calls OpenAI for tag suggestions. Store AI tags in the Tags table with source 'AI'. Display suggested tags in the UI for user confirmation.",
+        "testStrategy": "Create/edit notes and verify relevant AI tags are suggested and saved. Test with diverse note content.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Advanced Note Filtering",
+        "description": "Enable filtering notes by tags, date, and AI-suggested categories.",
+        "details": "Extend the notes API and UI to support filtering by multiple criteria. Use Prisma query filters for efficient DB queries. Update React Query hooks to accept filter params.",
+        "testStrategy": "Apply filters and verify correct notes are displayed. Test combinations of filters and edge cases.",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement AI-Based Note Summarization (Stretch Goal)",
+        "description": "Provide AI-generated summaries for longer notes using OpenAI.",
+        "details": "Add a button to request a summary for notes exceeding a length threshold. Call OpenAI's summarization endpoint via a Next.js API route. Display summary in the note detail view.",
+        "testStrategy": "Test summarization on long notes. Validate summary quality and error handling.",
+        "priority": "low",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Implement Responsive Design and Accessibility",
+        "description": "Ensure the app is fully responsive and accessible across devices.",
+        "details": "Use Tailwind's responsive utilities. Test layouts on desktop, tablet, and mobile. Add ARIA labels and keyboard navigation. Use Lighthouse and axe-core for accessibility audits.",
+        "testStrategy": "Manually test on multiple devices and browsers. Run automated accessibility checks.",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Enforce Security Best Practices",
+        "description": "Ensure data is encrypted at rest and in transit, and sensitive endpoints are protected.",
+        "details": "Use HTTPS for all environments. Rely on Clerk for secure authentication and session management. Ensure Prisma queries are parameterized. Store secrets in environment variables. Enable NeonDB encryption at rest.",
+        "testStrategy": "Attempt unauthorized access to protected routes. Verify HTTPS and inspect network traffic for encryption.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Optimize Performance and Scalability",
+        "description": "Meet performance targets and ensure scalability for 10k+ users.",
+        "details": "Use React Query for caching. Optimize Prisma queries with indexes. Enable Vercel Edge Functions for API routes. Use lazy loading for large lists. Monitor with Vercel Analytics and set up alerts.",
+        "testStrategy": "Run load tests for 10k+ users. Measure note load times (<200ms). Monitor server and DB metrics.",
+        "priority": "medium",
+        "dependencies": [
+          6,
+          7,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Analytics and Success Metrics Tracking",
+        "description": "Track activation, retention, AI usage, and engagement metrics.",
+        "details": "Integrate a privacy-compliant analytics tool (e.g., PostHog or Vercel Analytics). Track events: sign-up, note creation, AI usage. Store custom metrics in DB if needed. Build admin dashboard for metrics visualization.",
+        "testStrategy": "Verify events are tracked and metrics are accurate. Test dashboard displays correct data.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-29T19:16:22.146Z",
+      "updated": "2025-09-29T19:31:25.914Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

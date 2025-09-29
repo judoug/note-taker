@@ -1,0 +1,55 @@
+# Task ID: 2
+# Title: Integrate Clerk Authentication
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Add Clerk for authentication with email, Google, and GitHub providers. Set up sign-up, login, and session management.
+# Details:
+Install `@clerk/nextjs` and follow Clerk's Next.js App Router integration guide. Configure ClerkProvider in `layout.tsx`. Add sign-in and sign-up routes using Clerk's drop-in components. Set up environment variables from Clerk dashboard. Protect routes using Clerk middleware in `middleware.ts`.
+
+# Test Strategy:
+Sign up and log in with email and Google/GitHub. Verify session persistence and protected route access. Check user context is available.
+
+# Subtasks:
+## 1. Install Clerk Dependencies [pending]
+### Dependencies: None
+### Description: Install the @clerk/nextjs package in the Next.js project to enable Clerk authentication features.
+### Details:
+Run 'npm install @clerk/nextjs' in the project root. Ensure the package is added to package.json and node_modules.
+
+## 2. Configure ClerkProvider in Layout [pending]
+### Dependencies: 2.1
+### Description: Set up the ClerkProvider in the main layout file to initialize Clerk across the application.
+### Details:
+Import ClerkProvider from '@clerk/nextjs' and wrap the application's root layout (e.g., layout.tsx) with it to provide authentication context.
+
+## 3. Set Up Clerk Environment Variables [pending]
+### Dependencies: 2.1
+### Description: Configure environment variables required by Clerk using values from the Clerk dashboard.
+### Details:
+Add Clerk frontend and backend API keys, and any OAuth provider secrets (Google, GitHub) to the .env.local file as per Clerk documentation.
+
+## 4. Add Sign-In and Sign-Up Routes [pending]
+### Dependencies: 2.2, 2.3
+### Description: Create dedicated routes for user sign-in and sign-up using Clerk's recommended structure.
+### Details:
+Add /sign-in and /sign-up routes (or folders) in the app directory, preparing them for Clerk's drop-in components.
+
+## 5. Integrate Clerk Drop-In Components [pending]
+### Dependencies: 2.4
+### Description: Embed Clerk's SignIn and SignUp components into the respective routes for authentication UI.
+### Details:
+Import and render <SignIn /> and <SignUp /> components from '@clerk/nextjs' in the sign-in and sign-up route files.
+
+## 6. Implement Route Protection with Middleware [pending]
+### Dependencies: 2.2, 2.3
+### Description: Set up Clerk middleware to protect application routes and enforce authentication.
+### Details:
+Create or update middleware.ts to use Clerk's authMiddleware, specifying protected routes and configuring redirects for unauthenticated users.
+
+## 7. Test Authentication Flows and Session Management [pending]
+### Dependencies: 2.5, 2.6
+### Description: Verify that sign-up, login, OAuth, session persistence, and protected routes function as expected.
+### Details:
+Test email, Google, and GitHub sign-in/sign-up. Confirm session persistence, user context availability, and that protected routes are inaccessible without authentication.
+

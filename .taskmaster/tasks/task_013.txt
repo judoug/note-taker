@@ -1,0 +1,11 @@
+# Task ID: 13
+# Title: Enforce Security Best Practices
+# Status: pending
+# Dependencies: 2, 3, 4
+# Priority: high
+# Description: Ensure data is encrypted at rest and in transit, and sensitive endpoints are protected.
+# Details:
+Use HTTPS for all environments. Rely on Clerk for secure authentication and session management. Ensure Prisma queries are parameterized. Store secrets in environment variables. Enable NeonDB encryption at rest.
+
+# Test Strategy:
+Attempt unauthorized access to protected routes. Verify HTTPS and inspect network traffic for encryption.

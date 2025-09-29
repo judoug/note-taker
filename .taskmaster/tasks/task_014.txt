@@ -1,0 +1,11 @@
+# Task ID: 14
+# Title: Optimize Performance and Scalability
+# Status: pending
+# Dependencies: 6, 7, 10
+# Priority: medium
+# Description: Meet performance targets and ensure scalability for 10k+ users.
+# Details:
+Use React Query for caching. Optimize Prisma queries with indexes. Enable Vercel Edge Functions for API routes. Use lazy loading for large lists. Monitor with Vercel Analytics and set up alerts.
+
+# Test Strategy:
+Run load tests for 10k+ users. Measure note load times (<200ms). Monitor server and DB metrics.

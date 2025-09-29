@@ -1,0 +1,11 @@
+# Task ID: 9
+# Title: Implement AI Tag Suggestion
+# Status: pending
+# Dependencies: 8
+# Priority: medium
+# Description: Auto-suggest tags for notes using OpenAI based on note content.
+# Details:
+On note creation/edit, send note content to a Next.js API route that calls OpenAI for tag suggestions. Store AI tags in the Tags table with source 'AI'. Display suggested tags in the UI for user confirmation.
+
+# Test Strategy:
+Create/edit notes and verify relevant AI tags are suggested and saved. Test with diverse note content.

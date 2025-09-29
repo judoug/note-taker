@@ -1,0 +1,11 @@
+# Task ID: 11
+# Title: Implement AI-Based Note Summarization (Stretch Goal)
+# Status: pending
+# Dependencies: 8
+# Priority: low
+# Description: Provide AI-generated summaries for longer notes using OpenAI.
+# Details:
+Add a button to request a summary for notes exceeding a length threshold. Call OpenAI's summarization endpoint via a Next.js API route. Display summary in the note detail view.
+
+# Test Strategy:
+Test summarization on long notes. Validate summary quality and error handling.

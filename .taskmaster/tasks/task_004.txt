@@ -1,0 +1,43 @@
+# Task ID: 4
+# Title: Sync Clerk Users with Database
+# Status: pending
+# Dependencies: 2, 3
+# Priority: high
+# Description: Mirror Clerk users into the User table in NeonDB upon authentication.
+# Details:
+Implement a utility (e.g., `syncUserWithDatabase`) that fetches Clerk user info after sign-in and upserts into the User table keyed by Clerk ID. Use Prisma for DB operations. Optionally, use Clerk webhooks for user creation.
+
+# Test Strategy:
+Sign in as a new user and verify a corresponding User record is created/updated in the database.
+
+# Subtasks:
+## 1. Design User Sync Utility Interface [pending]
+### Dependencies: None
+### Description: Define the TypeScript interface and function signature for the user sync utility (e.g., `syncUserWithDatabase`). Specify required Clerk user fields, expected input/output, and error handling strategy.
+### Details:
+Determine which Clerk user properties (e.g., id, email, name, avatar) are needed in the User table. Document the interface and add type annotations for Prisma compatibility.
+
+## 2. Implement Upsert Logic with Prisma [pending]
+### Dependencies: 4.1
+### Description: Develop the core logic to upsert Clerk user data into the NeonDB User table using Prisma, keyed by Clerk ID.
+### Details:
+Write a function that takes Clerk user data and performs an upsert (insert or update) in the User table. Ensure idempotency and handle potential race conditions.
+
+## 3. Integrate Sync on Authentication Event [pending]
+### Dependencies: 4.2
+### Description: Trigger the user sync utility after successful Clerk authentication (sign-in or sign-up) to ensure the User table is updated in real time.
+### Details:
+Hook into Clerk's authentication flow (e.g., via session callbacks or middleware) to invoke the sync utility whenever a user signs in or up.
+
+## 4. Set Up Clerk Webhooks for User Events (Optional) [pending]
+### Dependencies: 4.2
+### Description: Configure Clerk webhooks to notify your backend of user.created and user.updated events, and implement handlers to sync user data accordingly.
+### Details:
+Register webhook endpoints in the Clerk dashboard. Implement secure webhook handlers that verify Clerk signatures and call the sync utility. Prepare for eventual consistency and webhook retries.
+
+## 5. Test User Creation and Update Flows [pending]
+### Dependencies: 4.3, 4.4
+### Description: Verify that new Clerk users and updates are correctly mirrored in the NeonDB User table through both authentication-triggered sync and webhook-triggered sync.
+### Details:
+Sign in as new and existing users, update user profiles, and confirm User table records are created/updated as expected. Simulate webhook delivery and failure scenarios.
+

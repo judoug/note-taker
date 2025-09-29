@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Implement Responsive Design and Accessibility
+# Status: pending
+# Dependencies: 5, 6
+# Priority: medium
+# Description: Ensure the app is fully responsive and accessible across devices.
+# Details:
+Use Tailwind's responsive utilities. Test layouts on desktop, tablet, and mobile. Add ARIA labels and keyboard navigation. Use Lighthouse and axe-core for accessibility audits.
+
+# Test Strategy:
+Manually test on multiple devices and browsers. Run automated accessibility checks.
