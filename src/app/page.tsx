@@ -23,31 +23,44 @@ export default async function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-              <Brain className="h-5 w-5 text-white" />
+        <div className="container mx-auto flex h-14 md:h-16 items-center justify-between px-4">
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <div className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+              <Brain className="h-4 w-4 md:h-5 md:w-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               AI Note Taker
             </span>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a 
+              href="#features" 
+              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+              aria-label="Go to Features section"
+            >
               Features
             </a>
-            <a href="#benefits" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a 
+              href="#benefits" 
+              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+              aria-label="Go to Benefits section"
+            >
               Benefits
             </a>
-            <a href="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a 
+              href="#pricing" 
+              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+              aria-label="Go to Pricing section"
+            >
               Pricing
             </a>
           </nav>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {user ? (
               <Link
                 href="/notes"
-                className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+                className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2 md:px-4 md:py-2 text-xs md:text-sm font-medium text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Open your notes dashboard"
               >
                 Open Notes
               </Link>
@@ -55,13 +68,15 @@ export default async function Home() {
               <>
                 <Link
                   href="/sign-in"
-                  className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-xs md:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+                  aria-label="Sign in to your account"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+                  className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2 md:px-4 md:py-2 text-xs md:text-sm font-medium text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  aria-label="Start using AI Note Taker for free"
                 >
                   Start Free
                 </Link>
@@ -80,23 +95,24 @@ export default async function Home() {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
         </div>
 
-        <section className="relative container mx-auto px-4 py-20 lg:py-32">
+        <section className="relative container mx-auto px-4 py-12 md:py-20 lg:py-32">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-8">
-              <Sparkles className="w-4 h-4 mr-2" />
+            <div className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-blue-100 text-blue-800 text-xs md:text-sm font-medium mb-6 md:mb-8">
+              <Sparkles className="w-3 h-3 md:w-4 md:h-4 mr-2" />
               Powered by Advanced AI
             </div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 md:mb-8 px-2">
               Your{' '}
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 AI-Powered
               </span>
-              <br />
+              <br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>
               Note-Taking Assistant
             </h1>
             
-            <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
               Transform your thoughts into organized, searchable notes with the power of artificial intelligence. 
               Generate content from prompts, get smart suggestions, and never lose an important idea again.
             </p>

@@ -108,17 +108,18 @@ export function AdvancedFilters({
   return (
     <div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
       {/* Header with search and toggle */}
-      <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center gap-4">
+      <div className="p-3 md:p-4 border-b border-gray-100">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
           {/* Search Input */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
             <input
               type="text"
               placeholder="Search notes..."
               value={filters.search}
               onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              aria-label="Search through your notes"
             />
           </div>
 

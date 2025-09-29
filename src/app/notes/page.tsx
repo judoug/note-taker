@@ -13,6 +13,7 @@ import { AdvancedFilters } from '@/components/notes/AdvancedFilters';
 import { NoteDetailModal } from '@/components/notes/NoteDetailModal';
 import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAINoteMutation } from '@/hooks/useAIGeneration';
+import { Sparkles, X } from 'lucide-react';
 import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData, NotesFilterState, FilterOption } from '@/types';
 import type { Tag } from '@prisma/client';
 
@@ -40,6 +41,7 @@ export default function NotesPage() {
   const [editingNote, setEditingNote] = useState<NoteWithTags | null>(null);
   const [deletingNote, setDeletingNote] = useState<NoteWithTags | null>(null);
   const [viewingNote, setViewingNote] = useState<NoteWithTags | null>(null);
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   
   // Available tags state
   const [allTags, setAllTags] = useState<Tag[]>([]);
@@ -97,6 +99,65 @@ export default function NotesPage() {
     label: tag.name,
     count: notes.filter(note => note.tags.some(noteTag => noteTag.name === tag.name)).length
   }));
+
+  // Keyboard navigation handler
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only handle shortcuts when not typing in an input/textarea
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+
+      // Ctrl/Cmd + N: Create new note
+      if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+        event.preventDefault();
+        setShowCreateForm(true);
+      }
+
+      // Ctrl/Cmd + G: AI Generate
+      if ((event.ctrlKey || event.metaKey) && event.key === 'g') {
+        event.preventDefault();
+        setShowAIForm(true);
+      }
+
+      // Escape: Close modals
+      if (event.key === 'Escape') {
+        if (viewingNote) setViewingNote(null);
+        else if (editingNote) setEditingNote(null);
+        else if (deletingNote) setDeletingNote(null);
+        else if (showCreateForm) setShowCreateForm(false);
+        else if (showAIForm) setShowAIForm(false);
+        else if (showKeyboardHelp) setShowKeyboardHelp(false);
+      }
+
+      // V: Toggle view mode
+      if (event.key === 'v' && !event.ctrlKey && !event.metaKey) {
+        setViewMode(viewMode === 'grid' ? 'list' : 'grid');
+      }
+
+      // Focus search bar with /
+      if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        const searchInput = document.querySelector('input[aria-label="Search through your notes"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+
+      // ?: Show keyboard shortcuts help
+      if (event.key === '?' && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        setShowKeyboardHelp(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [viewMode, viewingNote, editingNote, deletingNote, showCreateForm, showAIForm, showKeyboardHelp]);
 
   // Show loading state while checking authentication
   if (!isLoaded || isLoading || notesLoading) {
@@ -200,17 +261,25 @@ export default function NotesPage() {
 
   return (
     <>
+      {/* Skip Link for Accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Skip to main content
+      </a>
+      
       <div className="min-h-screen bg-gray-50">
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             {/* Logo and Title */}
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">N</span>
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-7 h-7 md:w-8 md:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs md:text-sm">N</span>
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">Notes</h1>
-                <p className="text-sm text-gray-500 hidden sm:block">
+                <h1 className="text-lg md:text-xl font-semibold text-gray-900">Notes</h1>
+                <p className="text-xs md:text-sm text-gray-500 hidden sm:block">
                   Welcome back, {user?.firstName || user?.emailAddresses[0]?.emailAddress?.split('@')[0] || 'there'}! 
                   Organize your thoughts with AI-powered features.
                 </p>
@@ -224,7 +293,7 @@ export default function NotesPage() {
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-8">
+        <main id="main-content" className="container mx-auto px-4 py-4 md:py-8">
           {/* Advanced Filters */}
           <AdvancedFilters
             filters={filters}
@@ -236,37 +305,64 @@ export default function NotesPage() {
           />
 
           {/* Action Toolbar */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4 md:mb-6">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <button
                 onClick={handleNewNoteClick}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center justify-center px-4 py-2.5 md:py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Create a new note"
               >
+                <span className="mr-2">+</span>
                 Create Note
               </button>
               
               <button
                 onClick={handleAIGenerateClick}
-                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                className="inline-flex items-center justify-center px-4 py-2.5 md:py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                aria-label="Generate a note using AI"
               >
+                <Sparkles className="w-4 h-4 mr-2" />
                 AI Generate
               </button>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600">View:</span>
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
-              >
-                Grid
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
-              >
-                List
-              </button>
+            <div className="flex items-center justify-between sm:justify-end gap-3">
+              <span className="text-sm text-gray-600 hidden md:block">View:</span>
+              <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 md:p-2.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset ${
+                    viewMode === 'grid' 
+                      ? 'bg-blue-100 text-blue-600' 
+                      : 'text-gray-500 hover:bg-gray-100'
+                  }`}
+                  aria-label="Switch to grid view"
+                  aria-pressed={viewMode === 'grid'}
+                >
+                  <div className="w-4 h-4 grid grid-cols-2 gap-0.5">
+                    <div className="bg-current rounded-sm"></div>
+                    <div className="bg-current rounded-sm"></div>
+                    <div className="bg-current rounded-sm"></div>
+                    <div className="bg-current rounded-sm"></div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 md:p-2.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset ${
+                    viewMode === 'list' 
+                      ? 'bg-blue-100 text-blue-600' 
+                      : 'text-gray-500 hover:bg-gray-100'
+                  }`}
+                  aria-label="Switch to list view"
+                  aria-pressed={viewMode === 'list'}
+                >
+                  <div className="w-4 h-4 flex flex-col gap-0.5">
+                    <div className="bg-current h-1 rounded-sm"></div>
+                    <div className="bg-current h-1 rounded-sm"></div>
+                    <div className="bg-current h-1 rounded-sm"></div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -329,6 +425,68 @@ export default function NotesPage() {
             setDeletingNote(note);
           }}
         />
+      )}
+
+      {/* Keyboard Shortcuts Help Modal */}
+      {showKeyboardHelp && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowKeyboardHelp(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="keyboard-help-title"
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 id="keyboard-help-title" className="text-xl font-semibold text-gray-900">
+                Keyboard Shortcuts
+              </h2>
+              <button
+                onClick={() => setShowKeyboardHelp(false)}
+                className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"
+                aria-label="Close keyboard shortcuts help"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Create new note</span>
+                <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">Ctrl+N</kbd>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">AI Generate note</span>
+                <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">Ctrl+G</kbd>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Search notes</span>
+                <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">/</kbd>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Toggle view mode</span>
+                <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">V</kbd>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Close modals</span>
+                <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">Esc</kbd>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Show this help</span>
+                <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">?</kbd>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                Press any shortcut key while not typing to use these commands
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
