@@ -20,6 +20,9 @@ NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/dashboard
 NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/dashboard
 
+# Clerk Webhook Secret (for user synchronization)
+CLERK_WEBHOOK_SECRET=your_webhook_secret_here
+
 # OpenAI API Key (for later tasks)
 OPENAI_API_KEY=your_openai_api_key_here
 
@@ -92,8 +95,50 @@ npx prisma migrate dev --name init
 npx prisma studio
 ```
 
+## User Synchronization Setup (Task 4):
+
+### 1. Set Up Clerk Webhooks:
+
+1. Go to [Clerk Dashboard](https://dashboard.clerk.com/) → Your Application
+2. Navigate to "Webhooks" in the sidebar
+3. Click "Add Endpoint"
+4. Set Endpoint URL to: `https://your-domain.com/api/clerk-webhook`
+   - For local development: `https://your-ngrok-url.ngrok.io/api/clerk-webhook`
+5. Select these events:
+   - `user.created` - When users sign up
+   - `user.updated` - When user profiles change
+   - `user.deleted` - When users are deleted
+6. Copy the "Webhook Secret" and add it to your `.env.local`:
+   ```
+   CLERK_WEBHOOK_SECRET=your_webhook_secret_here
+   ```
+
+### 2. Local Development with ngrok:
+
+For testing webhooks locally:
+
+```bash
+# Install ngrok (if not already installed)
+npm install -g ngrok
+
+# In a separate terminal, expose your local server
+ngrok http 3000
+
+# Copy the https URL (e.g., https://abc123.ngrok.io)
+# Use this URL + /api/clerk-webhook in Clerk dashboard
+```
+
+### 3. Test User Synchronization:
+
+1. Start your development server: `npm run dev`
+2. Sign up with a new account
+3. Check your database (Prisma Studio: `npx prisma studio`)
+4. Verify the user appears in the `users` table
+5. Update your profile in Clerk and verify changes sync to database
+
 ## Next Steps:
 
-Database setup complete! The next tasks will be:
-- Task 4: Sync Clerk Users with Database  
+User synchronization complete! The next tasks will be:
 - Task 5: Implement Landing Page
+- Task 6: Design Notes Library UI
+- Task 7: Implement Note CRUD Operations

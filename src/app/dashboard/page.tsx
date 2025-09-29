@@ -1,13 +1,18 @@
 import { UserButton } from '@clerk/nextjs';
-import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import { getCurrentUserWithSync } from '@/lib/auth-helpers';
+
+// Mark this page as dynamic (not statically generated)
+export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const user = await currentUser();
+  const userWithSync = await getCurrentUserWithSync();
 
-  if (!user) {
+  if (!userWithSync) {
     redirect('/sign-in');
   }
+
+  const { clerkUser, dbUser } = userWithSync;
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -17,7 +22,10 @@ export default async function DashboardPage() {
             Welcome to AI Note Taker
           </h1>
           <p className="text-muted-foreground mt-2">
-            Hello, {user.firstName || user.emailAddresses[0]?.emailAddress}!
+            Hello, {dbUser.name || clerkUser.firstName || dbUser.email}!
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Database User ID: {dbUser.id}
           </p>
         </div>
         <UserButton afterSignOutUrl="/" />
