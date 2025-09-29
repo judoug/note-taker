@@ -1,0 +1,67 @@
+// AI Note Taker - Prisma Schema
+// Database schema for users, notes, and AI-powered tags
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - synced with Clerk authentication
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique // Clerk user ID for authentication sync
+  email     String   @unique
+  name      String?
+  avatar    String?  // Profile picture URL
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  notes     Note[]
+
+  @@map("users")
+}
+
+// Note model - core content storage
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.Text // Allow large text content
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // User relationship
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relations
+  tags      Tag[]    @relation("NoteTags")
+
+  @@map("notes")
+  @@index([userId]) // Index for faster user queries
+  @@index([createdAt]) // Index for date-based sorting
+}
+
+// Tag model - both manual and AI-generated tags
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  source    TagSource @default(MANUAL) // AI or MANUAL
+  createdAt DateTime @default(now())
+  
+  // Relations
+  notes     Note[]   @relation("NoteTags")
+
+  @@map("tags")
+  @@unique([name]) // Ensure unique tag names globally
+}
+
+// Enum for tag sources
+enum TagSource {
+  AI
+  MANUAL
+}

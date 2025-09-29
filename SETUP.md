@@ -23,8 +23,9 @@ NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/dashboard
 # OpenAI API Key (for later tasks)
 OPENAI_API_KEY=your_openai_api_key_here
 
-# Database URL (for NeonDB - will be added in Task 3)
-DATABASE_URL=your_neondb_connection_string_here
+# Database URL (NeonDB PostgreSQL)
+# Get this from https://console.neon.tech/
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require
 ```
 
 ### 2. Get Clerk Keys:
@@ -66,8 +67,33 @@ Once `.env.local` is created with proper Clerk keys:
    ```
    Will fail during static generation until environment variables are set, but this confirms the authentication integration is complete.
 
+## Database Setup (Task 3):
+
+### 1. Create NeonDB Instance:
+
+1. Go to [NeonDB Console](https://console.neon.tech/)
+2. Sign up/Sign in and create a new project
+3. Name your project (e.g., "AI Note Taker")
+4. Copy the PostgreSQL connection string
+5. Add it to your `.env.local` file as `DATABASE_URL`
+
+### 2. Run Database Migrations:
+
+Once `DATABASE_URL` is configured:
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Run migrations to create tables
+npx prisma migrate dev --name init
+
+# Optional: View your database
+npx prisma studio
+```
+
 ## Next Steps:
 
-Authentication setup is complete! The next tasks will be:
-- Task 3: Set Up NeonDB and Prisma ORM
-- Task 4: Sync Clerk Users with Database
+Database setup complete! The next tasks will be:
+- Task 4: Sync Clerk Users with Database  
+- Task 5: Implement Landing Page
