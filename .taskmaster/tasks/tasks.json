@@ -456,8 +456,52 @@
         "dependencies": [
           8
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add Smart Summary Request Button and Trigger Logic",
+            "description": "Implement a button in the note detail view that appears only for notes exceeding a configurable length threshold. Integrate logic to trigger summary requests automatically or manually, supporting different summary types (brief, detailed, bullet points) based on user selection.",
+            "dependencies": [],
+            "details": "Ensure the button is context-aware and supports user choice of summary type. Optimize for user experience by minimizing UI clutter and providing clear affordances.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Next.js API Route for OpenAI Summarization",
+            "description": "Create a Next.js API route that receives note content and summary type, calls the OpenAI summarization endpoint, and returns the generated summary. Support chunking and progressive summarization for long notes, and cache summaries for repeated requests.",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Handle input chunking for long notes, progressive refinement, and summary storage/caching. Allow for prompt customization based on summary type. Ensure API route is robust and secure.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Display Summary and Quality Indicators in Note Detail View",
+            "description": "Render the AI-generated summary in the note detail view, supporting all summary types. Show summary quality indicators (e.g., confidence, coverage, last updated) and allow users to refresh or request different summary formats.",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Integrate summary display seamlessly with existing note UI. Provide visual feedback on summary quality and freshness. Support progressive summarization updates.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Handle Errors, Loading States, and Performance Optimization",
+            "description": "Implement robust error handling and loading indicators for the summarization workflow. Optimize for performance by debouncing requests, managing API rate limits, and ensuring smooth user experience during summary generation.",
+            "dependencies": [
+              "11.2",
+              "11.3"
+            ],
+            "details": "Show clear error messages and loading spinners. Retry failed requests when appropriate. Monitor and optimize API usage and UI responsiveness.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 12,
@@ -554,7 +598,7 @@
     ],
     "metadata": {
       "created": "2025-09-29T19:16:22.146Z",
-      "updated": "2025-09-29T22:11:12.441Z",
+      "updated": "2025-09-29T22:30:07.225Z",
       "description": "Tasks for master context"
     }
   }

@@ -7,7 +7,9 @@ import type {
   GenerateNoteResponse,
   SuggestTagsRequest,
   SuggestTagsResponse,
-  NotesFilterParams
+  NotesFilterParams,
+  SummarizeNoteRequest,
+  SummarizeNoteResponse
 } from '@/types';
 
 // Base API configuration
@@ -142,6 +144,14 @@ export const aiApi = {
       body: JSON.stringify(data),
     });
   },
+
+  // Summarize a note using AI
+  async summarizeNote(noteId: string, data: Omit<SummarizeNoteRequest, 'noteId'>): Promise<SummarizeNoteResponse> {
+    return apiRequest<SummarizeNoteResponse>(`/notes/${noteId}/summarize`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 };
 
 // Export individual functions for convenience
@@ -153,4 +163,4 @@ export const {
   delete: deleteNote,
 } = notesApi;
 
-export const { generateNote, suggestTags } = aiApi;
+export const { generateNote, suggestTags, summarizeNote } = aiApi;

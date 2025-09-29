@@ -158,3 +158,36 @@ export interface FilterOption {
   label: string
   count?: number
 }
+
+// AI Summarization types
+export interface SummarizeNoteRequest {
+  noteId: string
+  summaryType?: 'brief' | 'detailed' | 'bullets'
+  length?: 'short' | 'medium' | 'long'
+}
+
+export interface SummarizeNoteResponse {
+  success: boolean
+  summary: string
+  summaryType: 'brief' | 'detailed' | 'bullets'
+  wordCount: number
+  originalWordCount: number
+  confidence?: number
+  usage: {
+    tokens: number
+    model: string
+  }
+  generatedAt: string
+}
+
+export interface NoteSummary {
+  id: string
+  noteId: string
+  summary: string
+  summaryType: 'brief' | 'detailed' | 'bullets'
+  wordCount: number
+  originalWordCount: number
+  confidence?: number
+  createdAt: Date
+  updatedAt: Date
+}

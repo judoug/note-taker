@@ -10,6 +10,7 @@ import { EditNoteForm } from '@/components/notes/EditNoteForm';
 import { DeleteNoteDialog } from '@/components/notes/DeleteNoteDialog';
 import { AIGenerateNoteForm } from '@/components/notes/AIGenerateNoteForm';
 import { AdvancedFilters } from '@/components/notes/AdvancedFilters';
+import { NoteDetailModal } from '@/components/notes/NoteDetailModal';
 import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAINoteMutation } from '@/hooks/useAIGeneration';
 import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData, NotesFilterState, FilterOption } from '@/types';
@@ -38,6 +39,7 @@ export default function NotesPage() {
   const [showAIForm, setShowAIForm] = useState(false);
   const [editingNote, setEditingNote] = useState<NoteWithTags | null>(null);
   const [deletingNote, setDeletingNote] = useState<NoteWithTags | null>(null);
+  const [viewingNote, setViewingNote] = useState<NoteWithTags | null>(null);
   
   // Available tags state
   const [allTags, setAllTags] = useState<Tag[]>([]);
@@ -136,8 +138,8 @@ export default function NotesPage() {
   
   // Event Handlers
   const handleNoteClick = (note: NoteWithTags) => {
-    console.log('Note clicked:', note.title);
-    // TODO: Implement navigation to note detail page
+    // Open note detail modal for viewing and summarization
+    setViewingNote(note);
   };
 
   const handleNoteEdit = (note: NoteWithTags) => {
@@ -311,6 +313,21 @@ export default function NotesPage() {
           onConfirm={handleDeleteNote}
           onCancel={() => setDeletingNote(null)}
           isLoading={deleteNoteMutation.isPending}
+        />
+      )}
+
+      {viewingNote && (
+        <NoteDetailModal
+          note={viewingNote}
+          onClose={() => setViewingNote(null)}
+          onEdit={(note) => {
+            setViewingNote(null);
+            setEditingNote(note);
+          }}
+          onDelete={(note) => {
+            setViewingNote(null);
+            setDeletingNote(note);
+          }}
         />
       )}
     </>
