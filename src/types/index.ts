@@ -48,3 +48,39 @@ export interface UpdateNoteData {
   content?: string
   tags?: string[] // Tag names to create/associate
 }
+
+// UI component types
+export type ViewMode = 'list' | 'grid'
+
+export interface NotesViewProps {
+  mode: ViewMode
+  notes: NoteWithTags[]
+  onNoteClick: (note: NoteWithTags) => void
+  onNoteEdit: (note: NoteWithTags) => void
+  onNoteDelete: (noteId: string) => void
+}
+
+export interface NoteFilterState {
+  search: string
+  tags: string[]
+  dateRange?: {
+    start: Date
+    end: Date
+  }
+  source?: 'all' | 'manual' | 'ai'
+}
+
+// Component prop types
+export interface NoteCardProps {
+  note: NoteWithTags
+  onClick: (note: NoteWithTags) => void
+  onEdit: (note: NoteWithTags) => void
+  onDelete: (noteId: string) => void
+}
+
+export interface NoteListItemProps {
+  note: NoteWithTags
+  onClick: (note: NoteWithTags) => void
+  onEdit: (note: NoteWithTags) => void
+  onDelete: (noteId: string) => void
+}
