@@ -130,9 +130,9 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">Edit Note</h2>
           <button
             onClick={onCancel}
@@ -143,8 +143,9 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-6">
+        {/* Scrollable Form Content */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <form id="edit-note-form" onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-6">
           {/* Title Input */}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -245,37 +246,39 @@ export function EditNoteForm({ note, onSubmit, onCancel, isLoading = false }: Ed
               />
             </div>
           </div>
+          </form>
+        </div>
 
-          {/* Form Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-            <div className="text-sm text-gray-500">
-              {hasChanges ? 'You have unsaved changes' : 'No changes made'}
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={onCancel}
-                disabled={isFormDisabled}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isFormDisabled || !hasChanges}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isSubmitting ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                {isSubmitting ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
+        {/* Fixed Form Actions */}
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-white flex-shrink-0">
+          <div className="text-sm text-gray-500">
+            {hasChanges ? 'You have unsaved changes' : 'No changes made'}
           </div>
-        </form>
+          
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={isFormDisabled}
+              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="edit-note-form"
+              disabled={isFormDisabled || !hasChanges}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {isSubmitting ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

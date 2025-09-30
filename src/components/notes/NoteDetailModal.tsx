@@ -41,13 +41,13 @@ export function NoteDetailModal({
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 md:p-4"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 md:p-4"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="note-detail-title"
     >
-      <div className={`bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] md:max-h-[90vh] overflow-hidden ${className}`}>
+      <div className={`bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] md:max-h-[90vh] flex flex-col overflow-hidden ${className}`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200">
           <div className="flex-1 min-w-0">
@@ -115,7 +115,7 @@ export function NoteDetailModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0">
           <div className="p-4 md:p-6 space-y-4 md:space-y-6">
             {/* Tags */}
             {note.tags.length > 0 && (

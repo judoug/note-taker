@@ -51,8 +51,6 @@ export function useCreateNote() {
       queryClient.setQueriesData(
         { queryKey: noteKeys.lists() },
         (old: NoteWithTags[] | undefined) => {
-          if (!old) return [];
-          
           // Create optimistic note with temporary ID
           const optimisticNote: NoteWithTags = {
             id: `temp-${Date.now()}`,
@@ -69,7 +67,11 @@ export function useCreateNote() {
             })) || [],
           };
 
-          return [optimisticNote, ...old];
+          // Ensure old is an array (due to select function, it should always be an array or undefined)
+          const currentNotes = Array.isArray(old) ? old : [];
+          
+          // Return new array with optimistic note at the beginning
+          return [optimisticNote, ...currentNotes];
         }
       );
 
@@ -96,9 +98,10 @@ export function useUpdateNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateNoteData }) =>
-      notesApi.update(id, data),
-    onMutate: async ({ id, data }) => {
+    mutationFn: (updateData: UpdateNoteData & { id: string }) =>
+      notesApi.update(updateData.id, updateData),
+    onMutate: async (updateData) => {
+      const { id, ...data } = updateData;
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: noteKeys.lists() });
       await queryClient.cancelQueries({ queryKey: noteKeys.detail(id) });
@@ -111,9 +114,10 @@ export function useUpdateNote() {
       queryClient.setQueriesData(
         { queryKey: noteKeys.lists() },
         (old: NoteWithTags[] | undefined) => {
-          if (!old) return [];
+          // Ensure old is an array (due to select function, it should always be an array or undefined)
+          const currentNotes = Array.isArray(old) ? old : [];
           
-          return old.map(note => {
+          return currentNotes.map(note => {
             if (note.id === id) {
               return {
                 ...note,
@@ -154,7 +158,8 @@ export function useUpdateNote() {
 
       return { previousNotes, previousNote };
     },
-    onError: (err, { id }, context) => {
+    onError: (err, updateData, context) => {
+      const { id } = updateData;
       // Roll back optimistic updates
       if (context?.previousNotes) {
         context.previousNotes.forEach(([queryKey, data]) => {
@@ -165,7 +170,8 @@ export function useUpdateNote() {
         queryClient.setQueryData(noteKeys.detail(id), context.previousNote);
       }
     },
-    onSettled: (data, error, { id }) => {
+    onSettled: (data, error, updateData) => {
+      const { id } = updateData;
       // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: noteKeys.lists() });
       queryClient.invalidateQueries({ queryKey: noteKeys.detail(id) });
@@ -190,8 +196,9 @@ export function useDeleteNote() {
       queryClient.setQueriesData(
         { queryKey: noteKeys.lists() },
         (old: NoteWithTags[] | undefined) => {
-          if (!old) return [];
-          return old.filter(note => note.id !== id);
+          // Ensure old is an array (due to select function, it should always be an array or undefined)
+          const currentNotes = Array.isArray(old) ? old : [];
+          return currentNotes.filter(note => note.id !== id);
         }
       );
 

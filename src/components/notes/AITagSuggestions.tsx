@@ -25,8 +25,32 @@ export function AITagSuggestions({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [rejectedTags, setRejectedTags] = useState<Set<string>>(new Set());
   const [autoSuggestEnabled, setAutoSuggestEnabled] = useState(true);
+  const [lastSuggestedContent, setLastSuggestedContent] = useState<{ title: string; content: string }>({ title: '', content: '' });
   
   const tagSuggestionMutation = useTagSuggestionMutation();
+
+  // Helper function to count words in text
+  const countWords = (text: string): number => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
+
+  // Helper function to check if content has changed significantly
+  const hasSignificantChange = (currentTitle: string, currentContent: string): boolean => {
+    const currentTitleWords = countWords(currentTitle);
+    const currentContentWords = countWords(currentContent);
+    const lastTitleWords = countWords(lastSuggestedContent.title);
+    const lastContentWords = countWords(lastSuggestedContent.content);
+    
+    const titleWordDiff = Math.abs(currentTitleWords - lastTitleWords);
+    const contentWordDiff = Math.abs(currentContentWords - lastContentWords);
+    
+    // Trigger new suggestions if:
+    // 1. No previous suggestions (first time)
+    // 2. Title or content has changed by 20+ words
+    return (lastSuggestedContent.title === '' && lastSuggestedContent.content === '') ||
+           titleWordDiff >= 20 || 
+           contentWordDiff >= 20;
+  };
 
   const handleSuggestTags = useCallback(async () => {
     if (disabled || tagSuggestionMutation.isPending) return;
@@ -46,23 +70,32 @@ export function AITagSuggestions({
       );
       
       setSuggestions(newSuggestions);
+      
+      // Track the content when suggestions were generated
+      setLastSuggestedContent({
+        title: title.trim(),
+        content: content.trim()
+      });
     } catch (error) {
       console.error('Failed to get tag suggestions:', error);
       setSuggestions([]);
     }
   }, [disabled, tagSuggestionMutation, title, content, existingTags, rejectedTags]);
 
-  // Auto-suggest tags when content changes (debounced)
+  // Auto-suggest tags when content changes significantly (debounced)
   useEffect(() => {
     if (!autoSuggestEnabled || disabled) return;
     if (!title.trim() || content.length < 20) return; // Need minimum content
+    
+    // Only trigger if there's been significant change (20+ words)
+    if (!hasSignificantChange(title, content)) return;
 
     const timeoutId = setTimeout(() => {
       handleSuggestTags();
     }, 2000); // 2 second debounce
 
     return () => clearTimeout(timeoutId);
-  }, [title, content, existingTags, autoSuggestEnabled, disabled, handleSuggestTags]);
+  }, [title, content, existingTags, autoSuggestEnabled, disabled, handleSuggestTags, hasSignificantChange]);
 
   const handleAcceptTag = (tag: string) => {
     onTagAdd(tag);
@@ -77,8 +110,8 @@ export function AITagSuggestions({
   const handleToggleAutoSuggest = () => {
     setAutoSuggestEnabled(!autoSuggestEnabled);
     if (!autoSuggestEnabled) {
-      // Re-enable and immediately suggest if there's content
-      if (title.trim() && content.length >= 20) {
+      // Re-enable and immediately suggest if there's content and significant change
+      if (title.trim() && content.length >= 20 && hasSignificantChange(title, content)) {
         handleSuggestTags();
       }
     } else {
@@ -111,7 +144,11 @@ export function AITagSuggestions({
           {hasMinimumContent && (
             <button
               type="button"
-              onClick={handleSuggestTags}
+              onClick={() => {
+                // Force suggestions regardless of change threshold for manual requests
+                setLastSuggestedContent({ title: '', content: '' });
+                handleSuggestTags();
+              }}
               disabled={isLoading}
               className="text-xs text-purple-600 hover:text-purple-700 disabled:opacity-50 transition-colors"
             >

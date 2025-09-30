@@ -32,27 +32,20 @@ export default async function Home() {
               AI Note Taker
             </span>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center justify-center space-x-8 flex-1">
             <a 
               href="#features" 
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+              className="text-sm font-bold text-gray-700 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
               aria-label="Go to Features section"
             >
               Features
-            </a>
-            <a 
+          </a>
+          <a
               href="#benefits" 
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+              className="text-sm font-bold text-gray-700 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
               aria-label="Go to Benefits section"
             >
               Benefits
-            </a>
-            <a 
-              href="#pricing" 
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
-              aria-label="Go to Pricing section"
-            >
-              Pricing
             </a>
           </nav>
           <div className="flex items-center space-x-2 md:space-x-4">

@@ -103,9 +103,9 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">Create New Note</h2>
           <button
             onClick={onCancel}
@@ -116,8 +116,9 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-6">
+        {/* Scrollable Form Content */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <form id="create-note-form" onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-6">
           {/* Title Input */}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -218,29 +219,31 @@ export function CreateNoteForm({ onSubmit, onCancel, isLoading = false }: Create
               />
             </div>
           </div>
+          </form>
+        </div>
 
-          {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={onCancel}
-              disabled={isFormDisabled}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isFormDisabled}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {isSubmitting && (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              )}
-              {isSubmitting ? 'Creating...' : 'Create Note'}
-            </button>
-          </div>
-        </form>
+        {/* Fixed Form Actions */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-white flex-shrink-0">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isFormDisabled}
+            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="create-note-form"
+            disabled={isFormDisabled}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {isSubmitting && (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            )}
+            {isSubmitting ? 'Creating...' : 'Create Note'}
+          </button>
+        </div>
       </div>
     </div>
   );

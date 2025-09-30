@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { UserButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { withPerformanceTracking } from '@/lib/performance';
 import { NotesView } from '@/components/notes/NotesView';
 import { CreateNoteForm } from '@/components/notes/CreateNoteForm';
 import { EditNoteForm } from '@/components/notes/EditNoteForm';
@@ -14,9 +13,8 @@ import { AdvancedFilters } from '@/components/notes/AdvancedFilters';
 import { NoteDetailModal } from '@/components/notes/NoteDetailModal';
 import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAINoteMutation } from '@/hooks/useAIGeneration';
-import { Sparkles, X } from 'lucide-react';
-import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData, NotesFilterState, FilterOption } from '@/types';
-import type { Tag } from '@prisma/client';
+import { Sparkles, X, Brain } from 'lucide-react';
+import type { ViewMode, NoteWithTags, CreateNoteData, UpdateNoteData, GenerateNoteRequest, GeneratedNoteData, NotesFilterState, FilterOption, Tag } from '@/types';
 
 export default function NotesPage() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -231,7 +229,7 @@ export default function NotesPage() {
 
   const handleUpdateNote = async (data: UpdateNoteData) => {
     if (editingNote) {
-      await updateNoteMutation.mutateAsync({ id: editingNote.id, data });
+      await updateNoteMutation.mutateAsync({ id: editingNote.id, ...data });
       setEditingNote(null);
     }
   };
@@ -273,18 +271,22 @@ export default function NotesPage() {
       <div className="min-h-screen bg-gray-50">
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-            {/* Logo and Title */}
-            <div className="flex items-center gap-2 md:gap-3">
-              <div className="w-7 h-7 md:w-8 md:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs md:text-sm">N</span>
+            {/* Logo */}
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <div className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                <Brain className="h-4 w-4 md:h-5 md:w-5 text-white" />
               </div>
-              <div>
-                <h1 className="text-lg md:text-xl font-semibold text-gray-900">Notes</h1>
-                <p className="text-xs md:text-sm text-gray-500 hidden sm:block">
-                  Welcome back, {user?.firstName || user?.emailAddresses[0]?.emailAddress?.split('@')[0] || 'there'}! 
-                  Organize your thoughts with AI-powered features.
-                </p>
-              </div>
+              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                AI Note Taker
+              </span>
+            </div>
+
+            {/* Welcome Text */}
+            <div className="flex-1 mx-4 hidden md:block">
+              <p className="text-sm text-gray-600 text-center">
+                Welcome back, {user?.firstName || user?.emailAddresses[0]?.emailAddress?.split('@')[0] || 'there'}! 
+                Organize your thoughts with AI-powered features.
+              </p>
             </div>
 
             {/* User Actions */}

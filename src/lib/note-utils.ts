@@ -30,9 +30,10 @@ export function generatePreview(content: string, maxLength: number = 150): strin
 }
 
 // Format date for display
-export function formatDate(date: Date): string {
+export function formatDate(date: Date | string): string {
   const now = new Date();
-  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const diffInHours = (now.getTime() - dateObj.getTime()) / (1000 * 60 * 60);
   
   if (diffInHours < 1) {
     const minutes = Math.floor(diffInHours * 60);
@@ -46,7 +47,7 @@ export function formatDate(date: Date): string {
     const days = Math.floor(diffInHours / 24);
     return `${days} days ago`;
   } else {
-    return date.toLocaleDateString('en-US', {
+    return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
